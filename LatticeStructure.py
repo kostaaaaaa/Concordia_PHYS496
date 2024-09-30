@@ -6,8 +6,8 @@ class Lattice:
         self.vectors = np.array(vectors)
         self.basis = np.array(basis)
         self.lattice_type = self.determine_lattice_type()
-        self.x_range = (-5,5)
-        self.y_range = (-5,5)
+        self.x_range = (-3,3)
+        self.y_range = (-3,3)
     
     def determine_lattice_type(self):
         angle = np.arccos(np.dot(self.vectors[0], self.vectors[1]) /(np.linalg.norm(self.vectors[0]) * np.linalg.norm(self.vectors[1])))
@@ -74,7 +74,7 @@ class Lattice:
         lattice_shift_x = 0.5
         lattice_shift_y = np.sqrt(3)/6
 
-        ax.scatter(p21[:, 0]+lattice_shift_x, p21[:, 1]+lattice_shift_y,a, color=(0.1, 0.5, 0.2,0.5), s=50, label="A2")
+        ax.scatter(p21[:, 0]-lattice_shift_x, p21[:, 1]-lattice_shift_y,a, color=(0.1, 0.5, 0.2,0.5), s=50, label="A2")
         ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=50, label="B2")
         
                 
