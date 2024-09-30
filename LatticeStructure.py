@@ -1,12 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 class Lattice:
     def __init__(self, vectors, basis):
         self.vectors = np.array(vectors)
         self.basis = np.array(basis)
         self.lattice_type = self.determine_lattice_type()
+        self.x_range = (-5,5)
+        self.y_range = (-5,5)
     
     def determine_lattice_type(self):
         angle = np.arccos(np.dot(self.vectors[0], self.vectors[1]) /(np.linalg.norm(self.vectors[0]) * np.linalg.norm(self.vectors[1])))
@@ -20,22 +21,38 @@ class Lattice:
         else:
             return "Unknown Type"
 
-    def generate_lattice_points(self, range_x=(-5, 5), range_y=(-5, 5)):
+    def generate_lattice_points(self):
         points = []
-        for i in range(range_x[0], range_x[1]):
-            for j in range(range_y[0], range_y[1]):
+        points2 = []
+
+        for i in range(self.x_range[0], self.x_range[1]):
+            for j in range(self.y_range[0], self.y_range[1]):
                 displacement = i * self.vectors[0] + j * self.vectors[1]
-                for b in self.basis:
-                    points.append(displacement + b)
-        return np.array(points)
+                points.append(displacement + self.basis[0])
+                if len(self.basis) > 1:
+                    points2.append(displacement + self.basis[1])
+
+        points = np.array(points)
+        if points2:
+            points2 = np.array(points2)
+            return points, points2
+        else:
+            return points
+
+        
     
     def plot_lattice(self):
-        points = self.generate_lattice_points()
+        
+        if self.lattice_type=="Hexagon":
+            points, points2 = self.generate_lattice_points()
+        else:
+            points = self.generate_lattice_points()
+
         plt.figure(figsize=(8, 8))
-        for idx, b in enumerate(self.basis):
-            basis_points = points + b
-            color = (0.1, 0.2, 0.5,0.5) if idx ==0 else (0.5, 0.1, 0.2,0.5)
-            plt.scatter(basis_points[:,0], basis_points[:,1], color=color, s=50)
+        plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
+
+        if len(self.basis) > 1:
+            plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
         plt.title(f'{self.lattice_type} Lattice')
         plt.axis('equal')
         plt.xticks([],[])
@@ -44,27 +61,27 @@ class Lattice:
     
     def plot_bilayer(self):
         a=0.5 #vertical distance between layers
-        p1 = self.generate_lattice_points()
-        p2 = self.generate_lattice_points()
+        p11,p12 = self.generate_lattice_points()
+        p21,p22 = self.generate_lattice_points()
         
 
         fig = plt.figure(figsize=(10,10))
         ax = fig.add_subplot(111, projection="3d")
 
-        for idx, b in enumerate(self.basis):
-            basis_p1 = np.c_[p1+b, np.zeros(len(p1))]
-            color = (0.1, 0.2, 0.5,0.5) if idx ==0 else (0.5, 0.1, 0.2,0.5)
-            ax.scatter(basis_p1[:,0], basis_p1[:,1], basis_p1[:,2], color=color, s=50, label="Layer 1")
+        ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=50, label="A1")
+        ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=50, label="B1")
 
-        for idx, b in enumerate(self.basis):
-            basis_p2 = np.c_[p2+b, a*np.ones(len(p2))]
-            color = (0.1, 0.5, 0.2,0.5) if idx ==0 else (0.5, 0.5, 0.2,0.5)
-            ax.scatter(basis_p2[:,0]+0.5, basis_p2[:,1]+(np.sqrt(3)/6),basis_p2[:,2], color=color, s=50, label="Layer 2")
+        lattice_shift_x = 0.5
+        lattice_shift_y = np.sqrt(3)/6
+
+        ax.scatter(p21[:, 0]+lattice_shift_x, p21[:, 1]+lattice_shift_y,a, color=(0.1, 0.5, 0.2,0.5), s=50, label="A2")
+        ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=50, label="B2")
+        
                 
         ax.set_zlim(-a, a*2)
         ax.set_title("3D Bilayer Graphene")
+        ax.axis('equal')
         ax.legend()
-        plt.savefig("3D_Bilayer.pdf")
         plt.show()
     
     def __str__(self):
