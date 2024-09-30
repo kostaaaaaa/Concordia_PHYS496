@@ -78,12 +78,13 @@ basis_square = [[0, 0]]
 
 vectors_hexagon = [[1, 0], [0.5, np.sqrt(3)/2]]
 basis_hexagon = [[0, 0], [0.5, np.sqrt(3)/6]]
-"""
+
 lattice_triangle = Lattice(vectors_triangle, basis_triangle)
 lattice_triangle.plot_lattice()
 
 lattice_square = Lattice(vectors_square, basis_square)
 lattice_square.plot_lattice()
-"""
+
 lattice_hexagon = Lattice(vectors_hexagon, basis_hexagon)
+lattice_hexagon.plot_lattice()
 lattice_hexagon.plot_bilayer()
