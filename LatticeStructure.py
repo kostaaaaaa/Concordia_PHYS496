@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 class Lattice:
     def __init__(self, vectors, basis):
+        """ Initialization of Lattice parameters """
         self.vectors = np.array(vectors)
         self.basis = np.array(basis)
         self.lattice_type = self.determine_lattice_type()
@@ -10,6 +11,7 @@ class Lattice:
         self.y_range = (-3,3)
     
     def determine_lattice_type(self):
+        """ Using the angle the vectors produce the lattice type is determined """
         angle = np.arccos(np.dot(self.vectors[0], self.vectors[1]) /(np.linalg.norm(self.vectors[0]) * np.linalg.norm(self.vectors[1])))
         angle_deg = np.degrees(angle)
         if np.isclose(angle_deg, 90):
@@ -22,6 +24,7 @@ class Lattice:
             return "Unknown Type"
 
     def generate_lattice_points(self):
+        """ Generate Lattice Points to use for plotting, takes into account the basis """
         points = []
         points2 = []
 
@@ -39,10 +42,26 @@ class Lattice:
         else:
             return points
 
-        
+    def get_Reciprocal(self):
+        """ Solves the reciprocal lattice with the intialized vectors """
+        a1 = self.vectors[0]
+        a2 = self.vectors[1]
+
+        eq = np.array([[a1[0], a1[1], 0,     0],
+                      [a2[0], a2[1], 0,     0],
+                      [0,     0,     a1[0], a1[1]],
+                      [0,     0,     a2[0], a2[1]]])
+
+        ans = np.array([2 * np.pi, 0, 0, 2 * np.pi])
+
+        solution = np.linalg.solve(eq, ans)
+        b1 = solution[0:2]
+        b2 = solution[2:4]
+
+        return np.array([b1, b2])
     
     def plot_lattice(self):
-        
+        """ Plots 2D lattice structure """
         if self.lattice_type=="Hexagon":
             points, points2 = self.generate_lattice_points()
         else:
@@ -60,6 +79,7 @@ class Lattice:
         plt.show()
     
     def plot_bilayer(self):
+        """ Plots 3D Bilayer Hexagon lattices (Atoms A1 and B2 overlap)"""
         a=0.5 #vertical distance between layers
         p11,p12 = self.generate_lattice_points()
         p21,p22 = self.generate_lattice_points()
@@ -85,6 +105,7 @@ class Lattice:
         plt.show()
     
     def __str__(self):
+        """ Generic string output """
         return "This is a "+self.lattice_type+" lattice"
 
 vectors_triangle = [[1, 0], [0.5, np.sqrt(3)/2]]
