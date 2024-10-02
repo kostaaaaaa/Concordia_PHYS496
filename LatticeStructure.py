@@ -2,12 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class Lattice:
-    def __init__(self, vectors, basis):
+    def __init__(self, lattice_distance, vectors, basis):
         """ Initialization of Lattice parameters """
-        self.vectors = np.array(vectors)
-        self.basis = np.array(basis)
+        self.lattice_distance = lattice_distance
+        self.vectors = self.lattice_distance*np.array(vectors)
+        self.basis = self.lattice_distance*np.array(basis)
         self.lattice_type = self.determine_lattice_type()
         self.reciprocal_vectors = self.get_Reciprocal()
+        self.NN = self.get_NN()
         self.x_range = (-3,3)
         self.y_range = (-3,3)
 
@@ -41,6 +43,15 @@ class Lattice:
             return "Triangle"
         else:
             return "Unknown Type"
+        
+    def get_NN(self):
+        """ Generates the nearest neighbors of the 2D lattice strucutre """
+        nearestNeighbors = []
+        for basis in self.basis:
+            for vector in self.vectors:
+                nearestNeighbors.append(basis-vector)
+                nearestNeighbors.append(basis+vector)
+        return np.array(nearestNeighbors)
 
     def generate_lattice_points(self):
         """ Generate Lattice Points to use for plotting, takes into account the basis """
@@ -125,8 +136,8 @@ class Lattice:
         ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=50, label="A1")
         ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=50, label="B1")
 
-        lattice_shift_x = 0.5
-        lattice_shift_y = np.sqrt(3)/6
+        lattice_shift_x = self.lattice_distance*0.5
+        lattice_shift_y = self.lattice_distance*np.sqrt(3)/6
 
         ax.scatter(p21[:, 0]-lattice_shift_x, p21[:, 1]-lattice_shift_y,a, color=(0.1, 0.5, 0.2,0.5), s=50, label="A2")
         ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=50, label="B2")
@@ -142,6 +153,8 @@ class Lattice:
         """ Generic string output """
         return "This is a "+self.lattice_type+" lattice"
 
+lattice_distance = 1.0
+
 vectors_triangle = [[1, 0], [0.5, np.sqrt(3)/2]]
 basis_triangle = [[0, 0]]
 
@@ -151,12 +164,11 @@ basis_square = [[0, 0]]
 vectors_hexagon = [[1, 0], [0.5, np.sqrt(3)/2]]
 basis_hexagon = [[0, 0], [0.5, np.sqrt(3)/6]]
 
-lattice_triangle = Lattice(vectors_triangle, basis_triangle)
+lattice_triangle = Lattice(lattice_distance, vectors_triangle, basis_triangle)
 lattice_triangle.plot_lattice()
 
-lattice_square = Lattice(vectors_square, basis_square)
+lattice_square = Lattice(lattice_distance, vectors_square, basis_square)
 lattice_square.plot_lattice()
 
-lattice_hexagon = Lattice(vectors_hexagon, basis_hexagon)
-lattice_hexagon.plot_lattice()
+lattice_hexagon = Lattice(lattice_distance, vectors_hexagon, basis_hexagon)
 lattice_hexagon.plot_bilayer()
