@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class Lattice:
-    def __init__(self, lattice_distance, vectors, basis):
+    def __init__(self, lattice_distance, vectors, basis, num_sites):
         """ Initialization of Lattice parameters """
         self.lattice_distance = lattice_distance
         self.vectors = self.lattice_distance*np.array(vectors)
@@ -10,8 +10,8 @@ class Lattice:
         self.lattice_type = self.determine_lattice_type()
         self.reciprocal_vectors = self.get_Reciprocal()
         self.NN = self.get_NN()
-        self.x_range = (-3,3)
-        self.y_range = (-3,3)
+        self.x_range = (-num_sites, num_sites)
+        self.y_range = self.x_range
 
     def get_Reciprocal(self):
         """ Solves the reciprocal lattice with the intialized vectors """
@@ -72,6 +72,31 @@ class Lattice:
         else:
             return points
     
+    def generate_rotated_points(self, angle):
+        """ Degree rotation function for later use when discussing super lattices"""
+        angle = angle *(np.pi/180)
+        rot_matrix = np.array([[np.cos(angle),-np.sin(angle)],[np.sin(angle),np.cos(angle)]])
+        points = []
+        points2 = []
+
+        rot_vectors = []
+        for a in self.vectors:
+            rot_vectors.append(rot_matrix.dot(a))
+
+        for i in range(self.x_range[0], self.x_range[1]):
+            for j in range(self.y_range[0], self.y_range[1]):
+                displacement = i * rot_vectors[0] + j * rot_vectors[1]
+                points.append(displacement + self.basis[0])
+                if len(self.basis) > 1:
+                    points2.append(displacement + self.basis[1])
+
+        points = np.array(points)
+        if points2:
+            points2 = np.array(points2)
+            return points, points2
+        else:
+            return points
+
     def generate_reciprocal_points(self):
         """ Generates lattice points with reciprocal vectors"""
         points = []
@@ -127,7 +152,7 @@ class Lattice:
         """ Plots 3D Bilayer Hexagon lattices (Atoms A1 and B2 overlap)"""
         a = 0.5 #vertical distance between layers
         p11,p12 = self.generate_lattice_points()
-        p21,p22 = self.generate_lattice_points()
+        p21,p22 = self.generate_rotated_points(0)
         
 
         fig = plt.figure(figsize=(10,10))
@@ -154,6 +179,7 @@ class Lattice:
         return "This is a "+self.lattice_type+" lattice"
 
 lattice_distance = 1.0
+lattice_sites = 5
 
 vectors_triangle = [[1, 0], [0.5, np.sqrt(3)/2]]
 basis_triangle = [[0, 0]]
@@ -164,11 +190,11 @@ basis_square = [[0, 0]]
 vectors_hexagon = [[1, 0], [0.5, np.sqrt(3)/2]]
 basis_hexagon = [[0, 0], [0.5, np.sqrt(3)/6]]
 
-lattice_triangle = Lattice(lattice_distance, vectors_triangle, basis_triangle)
+lattice_triangle = Lattice(lattice_distance, vectors_triangle, basis_triangle, lattice_sites)
 lattice_triangle.plot_lattice()
 
-lattice_square = Lattice(lattice_distance, vectors_square, basis_square)
+lattice_square = Lattice(lattice_distance, vectors_square, basis_square, lattice_sites)
 lattice_square.plot_lattice()
 
-lattice_hexagon = Lattice(lattice_distance, vectors_hexagon, basis_hexagon)
+lattice_hexagon = Lattice(lattice_distance, vectors_hexagon, basis_hexagon, lattice_sites)
 lattice_hexagon.plot_bilayer()
