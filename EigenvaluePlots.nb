@@ -1,0 +1,53 @@
+Notebook[{Cell[
+BoxData[{RowBox[{RowBox[{"a"," ","="," ",RowBox[{"(",RowBox[{RowBox[
+{"\[ExponentialE]","^",RowBox[{"(",RowBox[{"\[ImaginaryI]","*","ky","*",RowBox[{"(",RowBox[
+{RowBox[{"Sqrt","[","3","]"}],"/","3"}],")"}]}],")"}]}],"+",RowBox[{"\[ExponentialE]","^",RowBox[
+{"(",RowBox[{RowBox[{"-","\[ImaginaryI]"}],"*",RowBox[{"(",RowBox[{RowBox[{"kx","*",RowBox[
+{"(",RowBox[{"1","/","2"}],")"}]}],"+",RowBox[{"ky","*",RowBox[{RowBox[{"Sqrt","[","3","]"}],"/","6"}]}]}],")"}]}],")"}]}],"+",RowBox[
+{"\[ExponentialE]","^",RowBox[{"(",RowBox[{RowBox[{"-","\[ImaginaryI]"}],"*",RowBox[
+{"(",RowBox[{RowBox[{RowBox[{"-","kx"}],"*",RowBox[{"(",RowBox[{"1","/","2"}],")"}]}],"+",RowBox[
+{"ky","*",RowBox[{RowBox[{"Sqrt","[","3","]"}],"/","6"}]}]}],")"}]}],")"}]}]}],")"}]}],";"}],"\n",RowBox[
+{RowBox[{"conja"," ","="," ",RowBox[{"(",RowBox[{RowBox[{"\[ExponentialE]","^",RowBox[
+{"(",RowBox[{RowBox[{"-","\[ImaginaryI]"}],"*","ky","*",RowBox[{"(",RowBox[{RowBox[
+{"Sqrt","[","3","]"}],"/","3"}],")"}]}],")"}]}],"+",RowBox[{"\[ExponentialE]","^",RowBox[
+{"(",RowBox[{RowBox[{"-","\[ImaginaryI]"}],"*",RowBox[{"(",RowBox[{RowBox[{"kx","*",RowBox[
+{"(",RowBox[{"1","/","2"}],")"}]}],"-",RowBox[{"ky","*",RowBox[{RowBox[{"Sqrt","[","3","]"}],"/","6"}]}]}],")"}]}],")"}]}],"+",RowBox[
+{"\[ExponentialE]","^",RowBox[{"(",RowBox[{RowBox[{"-","\[ImaginaryI]"}],"*",RowBox[
+{"(",RowBox[{RowBox[{RowBox[{"-","kx"}],"*",RowBox[{"(",RowBox[{"1","/","2"}],")"}]}],"-",RowBox[
+{"ky","*",RowBox[{RowBox[{"Sqrt","[","3","]"}],"/","6"}]}]}],")"}]}],")"}]}]}],")"}]}],";"}],"\n",RowBox[
+{"Clear","[","f","]"}],"\n",RowBox[{RowBox[{"mat"," ","="," ",RowBox[{"{",RowBox[
+{RowBox[{"{",RowBox[{"0",",","a"}],"}"}],",",RowBox[{"{",RowBox[{"conja",",","0"}],"}"}]}],"}"}]}],";"}],"\n",RowBox[
+{RowBox[{"Eigenvalues","[","mat","]"}],";"}],"\n",RowBox[{RowBox[{"f","[",RowBox[
+{"kx_",",","ky_"}],"]"}],":=",RowBox[{"Abs","[",RowBox[{SuperscriptBox["\[ExponentialE]",
+RowBox[{RowBox[{"-",FractionBox[RowBox[{"\[ImaginaryI]"," ","kx"}],"2"]}],"-",RowBox[
+{FractionBox["1","4"]," ","\[ImaginaryI]"," ",SqrtBox["3"]," ","ky"}]}]]," ",SqrtBox[
+RowBox[{SuperscriptBox["\[ExponentialE]",FractionBox[RowBox[{"\[ImaginaryI]"," ","kx"}],
+"2"]],"+",SuperscriptBox["\[ExponentialE]",FractionBox[RowBox[{"3"," ","\[ImaginaryI]"," ","kx"}],
+"2"]],"+",SuperscriptBox["\[ExponentialE]",RowBox[{FractionBox["1","2"]," ","\[ImaginaryI]"," ",SqrtBox[
+"3"]," ","ky"}]],"+",RowBox[{"3"," ",SuperscriptBox["\[ExponentialE]",RowBox[{RowBox[
+{"\[ImaginaryI]"," ","kx"}],"+",RowBox[{FractionBox["1","2"]," ","\[ImaginaryI]"," ",SqrtBox[
+"3"]," ","ky"}]}]]}],"+",SuperscriptBox["\[ExponentialE]",RowBox[{RowBox[{"2"," ","\[ImaginaryI]"," ","kx"}],"+",RowBox[
+{FractionBox["1","2"]," ","\[ImaginaryI]"," ",SqrtBox["3"]," ","ky"}]}]],"+",SuperscriptBox[
+"\[ExponentialE]",RowBox[{FractionBox[RowBox[{"\[ImaginaryI]"," ","kx"}],"2"],"+",RowBox[
+{"\[ImaginaryI]"," ",SqrtBox["3"]," ","ky"}]}]],"+",SuperscriptBox["\[ExponentialE]",
+RowBox[{FractionBox[RowBox[{"3"," ","\[ImaginaryI]"," ","kx"}],"2"],"+",RowBox[{"\[ImaginaryI]"," ",SqrtBox[
+"3"]," ","ky"}]}]]}]]}],"]"}]}],"\n",RowBox[{RowBox[{"g","[",RowBox[{"kx_",",","ky_"}],"]"}],":=",RowBox[
+{"-",RowBox[{"Abs","[",RowBox[{SuperscriptBox["\[ExponentialE]",RowBox[{RowBox[{"-",FractionBox[
+RowBox[{"\[ImaginaryI]"," ","kx"}],"2"]}],"-",RowBox[{FractionBox["1","4"]," ","\[ImaginaryI]"," ",SqrtBox[
+"3"]," ","ky"}]}]]," ",SqrtBox[RowBox[{SuperscriptBox["\[ExponentialE]",FractionBox[
+RowBox[{"\[ImaginaryI]"," ","kx"}],"2"]],"+",SuperscriptBox["\[ExponentialE]",FractionBox[
+RowBox[{"3"," ","\[ImaginaryI]"," ","kx"}],"2"]],"+",SuperscriptBox["\[ExponentialE]",
+RowBox[{FractionBox["1","2"]," ","\[ImaginaryI]"," ",SqrtBox["3"]," ","ky"}]],"+",RowBox[
+{"3"," ",SuperscriptBox["\[ExponentialE]",RowBox[{RowBox[{"\[ImaginaryI]"," ","kx"}],"+",RowBox[
+{FractionBox["1","2"]," ","\[ImaginaryI]"," ",SqrtBox["3"]," ","ky"}]}]]}],"+",SuperscriptBox[
+"\[ExponentialE]",RowBox[{RowBox[{"2"," ","\[ImaginaryI]"," ","kx"}],"+",RowBox[{FractionBox[
+"1","2"]," ","\[ImaginaryI]"," ",SqrtBox["3"]," ","ky"}]}]],"+",SuperscriptBox["\[ExponentialE]",
+RowBox[{FractionBox[RowBox[{"\[ImaginaryI]"," ","kx"}],"2"],"+",RowBox[{"\[ImaginaryI]"," ",SqrtBox[
+"3"]," ","ky"}]}]],"+",SuperscriptBox["\[ExponentialE]",RowBox[{FractionBox[RowBox[
+{"3"," ","\[ImaginaryI]"," ","kx"}],"2"],"+",RowBox[{"\[ImaginaryI]"," ",SqrtBox[
+"3"]," ","ky"}]}]]}]]}],"]"}]}]}],"\n",RowBox[{RowBox[{RowBox[{"f1"," ","=",RowBox[
+{"Plot3D","[",RowBox[{RowBox[{"{",RowBox[{RowBox[{"f","[",RowBox[{"x",",","y"}],"]"}],",",RowBox[
+{"g","[",RowBox[{"x",",","y"}],"]"}]}],"}"}],",",RowBox[{"{",RowBox[{"x",",",RowBox[
+{"-","4"}],",","4"}],"}"}],",",RowBox[{"{",RowBox[{"y",",",RowBox[{"-","4"}],",","4"}],"}"}]}],"]"}]}],";"}],"\n"}]}],
+"Input",CellLabel -> "In[10]:= ",ExpressionUUID -> "4995bb30-e5fc-44a5-9f8b-8322054ef92a"]},
+StyleDefinitions -> "Default.nb",FrontEndVersion -> "14.1 for Wolfram Cloud 1.69.0.1 (September 4, 2024)"]
