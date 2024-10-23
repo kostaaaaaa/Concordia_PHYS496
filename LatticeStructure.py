@@ -261,7 +261,7 @@ class Lattice:
             
                     
             ax.set_zlim(-a, a*2)
-            ax.set_title("3D Bilayer Graphene")
+            ax.set_title(f"{self.lattice_type} Graphene Aligned")
             ax.axis('equal')
             ax.legend()
             ax.view_init(90,90)
@@ -274,9 +274,11 @@ class Lattice:
     def __str__(self):
         """ Generic string output """
         return "This is a "+self.lattice_type+" lattice"
-
+    
+"""Initialized Parameters"""
 lattice_distance = 1.0
 lattice_sites = 20
+lattice_degrees = 10
 
 vectors_triangle = [[1, 0], [0.5, np.sqrt(3)/2]]
 basis_triangle = [[0, 0]]
@@ -287,13 +289,17 @@ basis_square = [[0, 0]]
 vectors_hexagon = [[1, 0], [0.5, np.sqrt(3)/2]]
 basis_hexagon = [[0, 0], [0.5, np.sqrt(3)/6]]
 
-lattice_degrees = 0
-
+"""Class Initialization"""
 lattice_triangle = Lattice(lattice_distance, vectors_triangle, basis_triangle, lattice_sites)
-lattice_triangle.plot_bilayer(lattice_degrees)
-
 lattice_square = Lattice(lattice_distance, vectors_square, basis_square, lattice_sites)
-lattice_square.plot_bilayer(lattice_degrees)
-
 lattice_hexagon = Lattice(lattice_distance, vectors_hexagon, basis_hexagon, lattice_sites)
+
+"""Plotting"""
+lattice_triangle.plot_bilayer(lattice_degrees)
+lattice_triangle.plot_bilayer_align(lattice_degrees)
+
+lattice_square.plot_bilayer(lattice_degrees)
+lattice_square.plot_bilayer_align(lattice_degrees)
+
 lattice_hexagon.plot_bilayer(lattice_degrees)
+lattice_hexagon.plot_bilayer_align(lattice_degrees)
