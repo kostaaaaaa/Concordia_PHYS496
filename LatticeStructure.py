@@ -148,38 +148,135 @@ class Lattice:
         plt.axis('equal')
         plt.show()
     
-    def plot_bilayer(self):
+    def plot_bilayer(self, degrees):
         """ Plots 3D Bilayer Hexagon lattices (Atoms A1 and B2 overlap)"""
         a = 0.5 #vertical distance between layers
-        p11,p12 = self.generate_lattice_points()
-        p21,p22 = self.generate_rotated_points(0)
-        
+        if self.lattice_type == "Hexagon":
+            p11,p12 = self.generate_lattice_points()
+            p21,p22 = self.generate_rotated_points(degrees)
+            
 
-        fig = plt.figure(figsize=(10,10))
-        ax = fig.add_subplot(111, projection="3d")
+            fig = plt.figure(figsize=(10,10))
+            ax = fig.add_subplot(111, projection="3d")
 
-        ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=50, label="A1")
-        ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=50, label="B1")
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=10, label="A1")
+            ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=10, label="B1")
 
-        lattice_shift_x = self.lattice_distance*0.5
-        lattice_shift_y = self.lattice_distance*np.sqrt(3)/6
+            lattice_shift_x = self.lattice_distance*0.5
+            lattice_shift_y = self.lattice_distance*np.sqrt(3)/6
 
-        ax.scatter(p21[:, 0]-lattice_shift_x, p21[:, 1]-lattice_shift_y,a, color=(0.1, 0.5, 0.2,0.5), s=50, label="A2")
-        ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=50, label="B2")
-        
-                
-        ax.set_zlim(-a, a*2)
-        ax.set_title("3D Bilayer Graphene")
-        ax.axis('equal')
-        ax.legend()
-        plt.show()
+            ax.scatter(p21[:, 0]-lattice_shift_x, p21[:, 1]-lattice_shift_y,a, color=(0.1, 0.5, 0.2,0.5), s=10, label="A2")
+            ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=10, label="B2")
+            
+                    
+            ax.set_zlim(-a, a*2)
+            ax.set_title("3D Bilayer Graphene")
+            ax.axis('equal')
+            ax.legend()
+            ax.view_init(90,90)
+            
+            plt.show()
+        elif self.lattice_type == "Triangle":
+            p11 = self.generate_lattice_points()
+            p22 = self.generate_rotated_points(degrees)
+            
+
+            fig = plt.figure(figsize=(10,10))
+            ax = fig.add_subplot(111, projection="3d")
+
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=10, label="A1")
+
+            lattice_shift_x = self.lattice_distance*0.5
+            lattice_shift_y = self.lattice_distance*np.sqrt(3)/6
+
+            ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=10, label="B2")
+            
+                    
+            ax.set_zlim(-a, a*2)
+            ax.set_title("Triangular Bilayer")
+            ax.axis('equal')
+            ax.legend()
+            ax.view_init(90,90)
+            
+            plt.show()
+        else:
+            p11 = self.generate_lattice_points()
+            p22 = self.generate_rotated_points(degrees)
+            
+
+            fig = plt.figure(figsize=(10,10))
+            ax = fig.add_subplot(111, projection="3d")
+
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=10, label="A1")
+
+            lattice_shift_x = self.lattice_distance*0.5
+            lattice_shift_y = self.lattice_distance*0.5
+
+            ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=10, label="B2")
+            
+                    
+            ax.set_zlim(-a, a*2)
+            ax.set_title("Square Bilayer")
+            ax.axis('equal')
+            ax.legend()
+            ax.view_init(90,90)
+            
+            plt.show()
+    
+    def plot_bilayer_align(self, degrees):
+        """Bilayer Plotting with no shift (Atoms A1 on A2, B1 on B2)"""
+        a = 0.5
+        if self.lattice_type == "Hexagon":
+            p11,p12 = self.generate_lattice_points()
+            p21,p22 = self.generate_rotated_points(degrees)
+            
+
+            fig = plt.figure(figsize=(10,10))
+            ax = fig.add_subplot(111, projection="3d")
+
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=10, label="A1")
+            ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=10, label="B1")
+
+            ax.scatter(p21[:, 0], p21[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=10, label="A2")
+            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=10, label="B2")
+            
+                    
+            ax.set_zlim(-a, a*2)
+            ax.set_title("3D Bilayer Graphene")
+            ax.axis('equal')
+            ax.legend()
+            ax.view_init(90,90)
+            ## plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
+            plt.show()
+        else:
+            p11 = self.generate_lattice_points()
+            p22 = self.generate_rotated_points(degrees)
+
+            fig = plt.figure(figsize=(10,10))
+            ax = fig.add_subplot(111, projection="3d")
+
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=10, label="A1")
+
+            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=10, label="A2")
+            
+                    
+            ax.set_zlim(-a, a*2)
+            ax.set_title("3D Bilayer Graphene")
+            ax.axis('equal')
+            ax.legend()
+            ax.view_init(90,90)
+            ## plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
+            plt.show()
+
+
+
     
     def __str__(self):
         """ Generic string output """
         return "This is a "+self.lattice_type+" lattice"
 
 lattice_distance = 1.0
-lattice_sites = 5
+lattice_sites = 20
 
 vectors_triangle = [[1, 0], [0.5, np.sqrt(3)/2]]
 basis_triangle = [[0, 0]]
@@ -190,11 +287,13 @@ basis_square = [[0, 0]]
 vectors_hexagon = [[1, 0], [0.5, np.sqrt(3)/2]]
 basis_hexagon = [[0, 0], [0.5, np.sqrt(3)/6]]
 
+lattice_degrees = 0
+
 lattice_triangle = Lattice(lattice_distance, vectors_triangle, basis_triangle, lattice_sites)
-lattice_triangle.plot_lattice()
+lattice_triangle.plot_bilayer(lattice_degrees)
 
 lattice_square = Lattice(lattice_distance, vectors_square, basis_square, lattice_sites)
-lattice_square.plot_lattice()
+lattice_square.plot_bilayer(lattice_degrees)
 
 lattice_hexagon = Lattice(lattice_distance, vectors_hexagon, basis_hexagon, lattice_sites)
-lattice_hexagon.plot_bilayer()
+lattice_hexagon.plot_bilayer(lattice_degrees)
