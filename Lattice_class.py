@@ -149,7 +149,7 @@ class Lattice:
         plt.axis('equal')
         plt.show()
     
-    def plot_bilayer(self, degrees):
+    def plot_bilayer(self, degrees, save):
         """ Plots 3D Bilayer Hexagon lattices (Atoms A1 and B2 overlap)"""
         a = 0.5 #vertical distance between layers
         if self.lattice_type == "Hexagon":
@@ -174,8 +174,9 @@ class Lattice:
             ax.set_title("3D Bilayer Graphene")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,90)
-            plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
+            ax.view_init(90,0,90)
+            if(save):
+                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
             plt.show()
         elif self.lattice_type == "Triangle":
             p11 = self.generate_lattice_points()
@@ -197,8 +198,9 @@ class Lattice:
             ax.set_title("Triangular Bilayer")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,90)
-            plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
+            ax.view_init(90,0,90)
+            if(save):
+                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
             plt.show()
         else:
             p11 = self.generate_lattice_points()
@@ -220,11 +222,12 @@ class Lattice:
             ax.set_title("Square Bilayer")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,90)
-            plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
+            ax.view_init(90,0,90)
+            if(save):
+                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
             plt.show()
     
-    def plot_bilayer_align(self, degrees):
+    def plot_bilayer_align(self, degrees, save):
         """Bilayer Plotting with no shift (Atoms A1 on A2, B1 on B2)"""
         a = 0.5
         if self.lattice_type == "Hexagon":
@@ -246,8 +249,9 @@ class Lattice:
             ax.set_title("3D Bilayer Graphene")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,90)
-            plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
+            ax.view_init(90,0,90)
+            if(save):
+                plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
             plt.show()
         else:
             p11 = self.generate_lattice_points()
@@ -265,13 +269,184 @@ class Lattice:
             ax.set_title(f"{self.lattice_type} Graphene Aligned")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,90)
-            plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
+            ax.view_init(90,0,90)
+            if(save):
+                plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
             plt.show()
 
+    def plot_bilayer_rotation_locus(self, degrees, save):
+        a = 0.5 #vertical distance between layers
+        if self.lattice_type == "Hexagon":
+            p11,p12 = self.generate_lattice_points()
+            p21,p22 = self.generate_rotated_points(degrees)
+            
 
+            fig = plt.figure(figsize=(10,10))
+            ax = fig.add_subplot(111, projection="3d")
+
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
+            ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=5, label="B1")
+
+            lattice_shift_x = self.lattice_distance*0.5
+            lattice_shift_y = self.lattice_distance*np.sqrt(3)/6
+
+            p21[:,0] = p21[:,0]-lattice_shift_x
+            p21[:,1] = p21[:,1]-lattice_shift_y
+
+            p22[:,0] = p22[:,0]-lattice_shift_x
+            p22[:,1] = p22[:,1]-lattice_shift_y
+
+            ax.scatter(p21[:, 0], p21[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
+            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
+            
+            theta = np.linspace(0, np.pi/2, 20)
+            for point in p22:
+                radius = np.linalg.norm(point) 
+                circle_x = radius * np.cos(theta)
+                circle_y = radius * np.sin(theta)
+
+                ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
+                    
+            ax.set_zlim(-a, a*2)
+            ax.set_title("3D Bilayer Graphene with Rotations")
+            ax.axis('equal')
+            ax.legend()
+            ax.view_init(90,0,90)
+            if(save):
+                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}_rotation_locus.pdf')
+            plt.show()
+        elif self.lattice_type == "Triangle":
+            p11 = self.generate_lattice_points()
+            p22 = self.generate_rotated_points(degrees)
+            
+
+            fig = plt.figure(figsize=(10,10))
+            ax = fig.add_subplot(111, projection="3d")
+
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
+
+            lattice_shift_x = self.lattice_distance*0.5
+            lattice_shift_y = self.lattice_distance*np.sqrt(3)/6
+
+            p22[:,0] = p22[:,0]-lattice_shift_x
+            p22[:,1] = p22[:,1]-lattice_shift_y
+
+            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
+            
+            theta = np.linspace(0, np.pi/2, 20)
+            for point in p22:
+                radius = np.linalg.norm(point) 
+                circle_x = radius * np.cos(theta)
+                circle_y = radius * np.sin(theta)
+
+                ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
+
+            ax.set_zlim(-a, a*2)
+            ax.set_title("Triangular Bilayer with Rotations")
+            ax.axis('equal')
+            ax.legend()
+            ax.view_init(90,0,90)
+            if(save):
+                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}_rotation_locus.pdf')
+            plt.show()
+        else:
+            p11 = self.generate_lattice_points()
+            p22 = self.generate_rotated_points(degrees)
+            
+
+            fig = plt.figure(figsize=(10,10))
+            ax = fig.add_subplot(111, projection="3d")
+
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
+
+            lattice_shift_x = self.lattice_distance*0.5
+            lattice_shift_y = self.lattice_distance*0.5
+
+            p22[:,0] = p22[:,0]-lattice_shift_x
+            p22[:,1] = p22[:,1]-lattice_shift_y
+
+            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
+            
+            theta = np.linspace(0, np.pi/2, 20)
+            for point in p22:
+                radius = np.linalg.norm(point) 
+                circle_x = radius * np.cos(theta)
+                circle_y = radius * np.sin(theta)
+
+                ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
+                
+            ax.set_zlim(-a, a*2)
+            ax.set_title("Square Bilayer with Rotations")
+            ax.axis('equal')
+            ax.legend()
+            ax.view_init(90,0,90)
+            if(save):
+                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}_rotation_locus.pdf')
+            plt.show()
+
+    def plot_aligned_bilayer_rotation_locus(self, degrees, save):
+        a = 0.5
+        if self.lattice_type == "Hexagon":
+            p11,p12 = self.generate_lattice_points()
+            p21,p22 = self.generate_rotated_points(degrees)
+            
+
+            fig = plt.figure(figsize=(10,10))
+            ax = fig.add_subplot(111, projection="3d")
+
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
+            ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=5, label="B1")
+
+            ax.scatter(p21[:, 0], p21[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
+            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
+
+            theta = np.linspace(0, np.pi/2, 20)
+            for point in p22:
+                radius = np.linalg.norm(point) 
+                circle_x = radius * np.cos(theta)
+                circle_y = radius * np.sin(theta)
+
+                ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
+            
+                    
+            ax.set_zlim(-a, a*2)
+            ax.set_title("3D Bilayer Graphene with rotations (Aligned)")
+            ax.axis('equal')
+            ax.legend()
+            ax.view_init(90,0,90)
+            if(save):
+                plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}_rotation_locus.pdf')
+            plt.show()
+        else:
+            p11 = self.generate_lattice_points()
+            p22 = self.generate_rotated_points(degrees)
+
+            fig = plt.figure(figsize=(10,10))
+            ax = fig.add_subplot(111, projection="3d")
+
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
+            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
+
+            theta = np.linspace(0, np.pi/2, 20)
+            for point in p22:
+                radius = np.linalg.norm(point) 
+                circle_x = radius * np.cos(theta)
+                circle_y = radius * np.sin(theta)
+
+                ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
+                    
+            ax.set_zlim(-a, a*2)
+            ax.set_title(f"{self.lattice_type} Graphene Aligned with Rotations (Aligned)")
+            ax.axis('equal')
+            ax.legend()
+            ax.view_init(90,0,90)
+            if(save):
+                plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}_rotation_locus.pdf')
+            plt.show()
+
+    """ To Do Later
     def find_aligned_overlap_points(self, degrees, tolerance=0.04):
-        """Finds overlapping points in the bilayer structure within a given tolerance."""
+        Finds overlapping points in the bilayer structure within a given tolerance.
         if self.lattice_type == "Hexagon":
             p11,p12 = self.generate_lattice_points()
             p21,p22 = self.generate_rotated_points(degrees)
@@ -314,7 +489,8 @@ class Lattice:
             
             return np.array(overlap_points)
     
-   
+    """
+    
     def __str__(self):
         """ Generic string output """
         return "This is a "+self.lattice_type+" lattice"
