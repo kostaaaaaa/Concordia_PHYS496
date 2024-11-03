@@ -23,7 +23,6 @@ lattice_square = Lattice(lattice_distance, vectors_square, basis_square, lattice
 lattice_hexagon = Lattice(lattice_distance, vectors_hexagon, basis_hexagon, lattice_sites)
 
 """Plotting"""
-
 lattice_triangle.plot_bilayer(lattice_degrees, save=save_state)
 lattice_triangle.plot_bilayer_align(lattice_degrees, save=save_state)
 
@@ -33,5 +32,5 @@ lattice_square.plot_bilayer_align(lattice_degrees, save=save_state)
 lattice_hexagon.plot_bilayer(lattice_degrees, save=save_state)
 lattice_hexagon.plot_bilayer_align(lattice_degrees, save=save_state)
 
-lattice_hexagon.plot_bilayer_rotation_locus(0, save=save_state)
-lattice_hexagon.plot_aligned_bilayer_rotation_locus(0, save=save_state)
+lattice_square.plot_bilayer_rotation_locus(5, save=save_state)
+lattice_square.plot_aligned_bilayer_rotation_locus(5, save=save_state)

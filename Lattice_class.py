@@ -174,7 +174,7 @@ class Lattice:
             ax.set_title("3D Bilayer Graphene")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,0,90)
+            ax.view_init(90,90)
             if(save):
                 plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
             plt.show()
@@ -198,7 +198,7 @@ class Lattice:
             ax.set_title("Triangular Bilayer")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,0,90)
+            ax.view_init(90,90)
             if(save):
                 plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
             plt.show()
@@ -222,7 +222,7 @@ class Lattice:
             ax.set_title("Square Bilayer")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,0,90)
+            ax.view_init(90,90)
             if(save):
                 plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
             plt.show()
@@ -249,7 +249,7 @@ class Lattice:
             ax.set_title("3D Bilayer Graphene")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,0,90)
+            ax.view_init(90,90)
             if(save):
                 plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
             plt.show()
@@ -269,7 +269,7 @@ class Lattice:
             ax.set_title(f"{self.lattice_type} Graphene Aligned")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,0,90)
+            ax.view_init(90,90)
             if(save):
                 plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
             plt.show()
@@ -299,8 +299,9 @@ class Lattice:
             ax.scatter(p21[:, 0], p21[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
             ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
             
-            theta = np.linspace(0, np.pi/2, 20)
-            for point in p22:
+            theta = np.linspace(0, np.pi/2, 100)
+            temp = list(set(p11[:,0]))
+            for point in temp:
                 radius = np.linalg.norm(point) 
                 circle_x = radius * np.cos(theta)
                 circle_y = radius * np.sin(theta)
@@ -333,8 +334,9 @@ class Lattice:
 
             ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
             
-            theta = np.linspace(0, np.pi/2, 20)
-            for point in p22:
+            theta = np.linspace(0, np.pi/2, 100)
+            temp = list(set(p11[:,0]))
+            for point in temp:
                 radius = np.linalg.norm(point) 
                 circle_x = radius * np.cos(theta)
                 circle_y = radius * np.sin(theta)
@@ -367,13 +369,15 @@ class Lattice:
 
             ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
             
-            theta = np.linspace(0, np.pi/2, 20)
-            for point in p22:
-                radius = np.linalg.norm(point) 
-                circle_x = radius * np.cos(theta)
-                circle_y = radius * np.sin(theta)
+            theta = np.linspace(0, np.pi/2, 100)
+            temp = list(set(p11[:,0]))
+            for point in temp:
+                if point > 0:
+                    radius = np.linalg.norm(point) 
+                    circle_x = radius * np.cos(theta)
+                    circle_y = radius * np.sin(theta)
 
-                ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
+                    ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
                 
             ax.set_zlim(-a, a*2)
             ax.set_title("Square Bilayer with Rotations")
@@ -400,8 +404,9 @@ class Lattice:
             ax.scatter(p21[:, 0], p21[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
             ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
 
-            theta = np.linspace(0, np.pi/2, 20)
-            for point in p22:
+            theta = np.linspace(0, np.pi/2, 100)
+            temp = list(set(p11[:,0]))
+            for point in temp:
                 radius = np.linalg.norm(point) 
                 circle_x = radius * np.cos(theta)
                 circle_y = radius * np.sin(theta)
@@ -427,8 +432,9 @@ class Lattice:
             ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
             ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
 
-            theta = np.linspace(0, np.pi/2, 20)
-            for point in p22:
+            theta = np.linspace(0, np.pi/2, 100)
+            temp = list(set(p11[:,0]))
+            for point in temp:
                 radius = np.linalg.norm(point) 
                 circle_x = radius * np.cos(theta)
                 circle_y = radius * np.sin(theta)
@@ -443,54 +449,7 @@ class Lattice:
             if(save):
                 plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}_rotation_locus.pdf')
             plt.show()
-
-    """ To Do Later
-    def find_aligned_overlap_points(self, degrees, tolerance=0.04):
-        Finds overlapping points in the bilayer structure within a given tolerance.
-        if self.lattice_type == "Hexagon":
-            p11,p12 = self.generate_lattice_points()
-            p21,p22 = self.generate_rotated_points(degrees)
-
-            
-        else:
-            overlap_points = []
-            p11 = self.generate_lattice_points()
-            p22 = self.generate_rotated_points(degrees)
-
-            for point in p22:
-                for point2 in p11:
-                    if np.linalg.norm(point - point2)<tolerance:
-                        overlap_points.append(point)
-            
-            return np.array(overlap_points)
-    
-    def find_overlap_points(self, degrees, tolerance=0.04):
-
-        if self.lattice_type == "Hexagon":
-            p11,p12 = self.generate_lattice_points()
-            p21,p22 = self.generate_rotated_points(degrees)
-
-            
-        else:
-            overlap_points = []
-            p11 = self.generate_lattice_points()
-            p22 = self.generate_rotated_points(degrees)
-
-            lattice_shift_x = self.lattice_distance*0.5
-            lattice_shift_y = self.lattice_distance*0.5
-
-            p11[:,0]+=lattice_shift_x
-            p11[:,1]+=lattice_shift_y
-
-            for point in p22:
-                for point2 in p11:
-                    if math.dist(point,point2)<tolerance:
-                        overlap_points.append(point)
-            
-            return np.array(overlap_points)
-    
-    """
-    
+   
     def __str__(self):
         """ Generic string output """
         return "This is a "+self.lattice_type+" lattice"
