@@ -29,8 +29,10 @@ lattice_triangle.plot_bilayer_align(lattice_degrees, save=save_state)
 lattice_square.plot_bilayer(lattice_degrees, save=save_state)
 lattice_square.plot_bilayer_align(lattice_degrees, save=save_state)
 
+"""
 lattice_hexagon.plot_bilayer(lattice_degrees, save=save_state)
 lattice_hexagon.plot_bilayer_align(lattice_degrees, save=save_state)
 
 lattice_square.plot_bilayer_rotation_locus(5, save=save_state)
 lattice_square.plot_aligned_bilayer_rotation_locus(5, save=save_state)
+"""

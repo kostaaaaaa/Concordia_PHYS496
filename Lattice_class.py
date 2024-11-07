@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import math
+from matplotlib.animation import FuncAnimation
 
 class Lattice:
     def __init__(self, lattice_distance, vectors, basis, num_sites):
@@ -174,7 +174,7 @@ class Lattice:
             ax.set_title("3D Bilayer Graphene")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,90)
+            ax.view_init(90,90,180)
             if(save):
                 plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
             plt.show()
@@ -198,7 +198,7 @@ class Lattice:
             ax.set_title("Triangular Bilayer")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,90)
+            ax.view_init(90,90,180)
             if(save):
                 plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
             plt.show()
@@ -222,7 +222,7 @@ class Lattice:
             ax.set_title("Square Bilayer")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,90)
+            ax.view_init(90,90,180)
             if(save):
                 plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
             plt.show()
@@ -249,7 +249,7 @@ class Lattice:
             ax.set_title("3D Bilayer Graphene")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,90)
+            ax.view_init(90,90,180)
             if(save):
                 plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
             plt.show()
@@ -269,7 +269,7 @@ class Lattice:
             ax.set_title(f"{self.lattice_type} Graphene Aligned")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,90)
+            ax.view_init(90,90,180)
             if(save):
                 plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
             plt.show()
@@ -312,7 +312,7 @@ class Lattice:
             ax.set_title("3D Bilayer Graphene with Rotations")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,0,90)
+            ax.view_init(0,0,180)
             if(save):
                 plt.savefig(f'{self.lattice_type}_bilayer_{degrees}_rotation_locus.pdf')
             plt.show()
@@ -347,7 +347,7 @@ class Lattice:
             ax.set_title("Triangular Bilayer with Rotations")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,0,90)
+            ax.view_init(0,0,180)
             if(save):
                 plt.savefig(f'{self.lattice_type}_bilayer_{degrees}_rotation_locus.pdf')
             plt.show()
@@ -383,7 +383,7 @@ class Lattice:
             ax.set_title("Square Bilayer with Rotations")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,0,90)
+            ax.view_init(0,0,180)
             if(save):
                 plt.savefig(f'{self.lattice_type}_bilayer_{degrees}_rotation_locus.pdf')
             plt.show()
@@ -418,7 +418,7 @@ class Lattice:
             ax.set_title("3D Bilayer Graphene with rotations (Aligned)")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,0,90)
+            ax.view_init(0,0,180)
             if(save):
                 plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}_rotation_locus.pdf')
             plt.show()
@@ -445,10 +445,55 @@ class Lattice:
             ax.set_title(f"{self.lattice_type} Graphene Aligned with Rotations (Aligned)")
             ax.axis('equal')
             ax.legend()
-            ax.view_init(90,0,90)
+            ax.view_init(0,0,180)
             if(save):
                 plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}_rotation_locus.pdf')
             plt.show()
+
+    def plot_bilayer_twist_animation(self, save):
+        if self.lattice_type == "Hexagon":
+            return 0
+        else:
+            max_angle = 90
+            # Set up figure and 3D plot
+            fig = plt.figure(figsize=(10, 10))
+            ax = fig.add_subplot(111, projection="3d")
+
+            p11 = self.generate_lattice_points()
+            a = 1
+
+            # Scatter plot for the bottom layer (fixed)
+            ax.scatter(p11[:, 0], p11[:, 1], 0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1 (Bottom Layer)")
+            
+            # Plot variable to store rotated points
+            top_layer_plot, = ax.plot([], [], [], 'o', color=(0.1, 0.5, 0.2, 0.5), markersize=5, label="A2 (Top Layer)")
+
+            # Set plot limits and labels
+            ax.axis('equal')
+            ax.set_zlim(-a, a * 2)
+            ax.set_title(f"{self.lattice_type} Bilayer Rotation Animation")
+            ax.legend()
+            ax.view_init(90,90,180)
+
+            # Animation function
+            def update(frame):
+                angle = frame  # Current rotation angle in degrees
+                p22 = self.generate_rotated_points(angle)
+                # Update the data for the top layer plot
+                top_layer_plot.set_data(p22[:, 0], p22[:, 1])
+                top_layer_plot.set_3d_properties(a)  # Set constant z for top layer
+                ax.set_title(f"Rotation Angle: {angle:.1f}°")
+                return top_layer_plot,
+
+            # Create the animation
+            anim = FuncAnimation(fig, update, frames=np.linspace(0, max_angle, 100), blit=True)
+
+            # Save or show the animation
+            if save:
+                anim.save(f'{self.lattice_type}_rotation_animation.mp4', fps=15)
+            else:
+                plt.show()
+
    
     def __str__(self):
         """ Generic string output """
