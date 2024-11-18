@@ -11,6 +11,7 @@ class Lattice:
         self.lattice_type = self.determine_lattice_type()
         self.reciprocal_vectors = self.get_Reciprocal()
         self.NN = self.get_NN()
+        self.num_sites = num_sites
         self.x_range = (-num_sites, num_sites)
         self.y_range = self.x_range
 
@@ -164,7 +165,7 @@ class Lattice:
             ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=5, label="B1")
 
             lattice_shift_x = self.lattice_distance*0.5
-            lattice_shift_y = self.lattice_distance*np.sqrt(3)/6
+            lattice_shift_y = self.lattice_distance*np.sqrt(3)/4
 
             ax.scatter(p21[:, 0]-lattice_shift_x, p21[:, 1]-lattice_shift_y,a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
             ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
@@ -189,7 +190,7 @@ class Lattice:
             ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
 
             lattice_shift_x = self.lattice_distance*0.5
-            lattice_shift_y = self.lattice_distance*np.sqrt(3)/6
+            lattice_shift_y = self.lattice_distance*np.sqrt(3)/4
 
             ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
             
@@ -274,181 +275,50 @@ class Lattice:
                 plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
             plt.show()
 
-    def plot_bilayer_rotation_locus(self, degrees, save):
-        a = 0.5 #vertical distance between layers
+    def plot_lattice_with_twist_circles(self, save):
+        """ 
+        Plots 2D lattice structure with circles of radius n*(a_1+a_2)+a_1 
+        using lattice vectors. Number of circles determined by self.num_sites.
+        """
+        # Determine lattice points
         if self.lattice_type == "Hexagon":
-            p11,p12 = self.generate_lattice_points()
-            p21,p22 = self.generate_rotated_points(degrees)
-            
-
-            fig = plt.figure(figsize=(10,10))
-            ax = fig.add_subplot(111, projection="3d")
-
-            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
-            ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=5, label="B1")
-
-            lattice_shift_x = self.lattice_distance*0.5
-            lattice_shift_y = self.lattice_distance*np.sqrt(3)/6
-
-            p21[:,0] = p21[:,0]-lattice_shift_x
-            p21[:,1] = p21[:,1]-lattice_shift_y
-
-            p22[:,0] = p22[:,0]-lattice_shift_x
-            p22[:,1] = p22[:,1]-lattice_shift_y
-
-            ax.scatter(p21[:, 0], p21[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
-            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
-            
-            theta = np.linspace(0, np.pi/2, 100)
-            temp = list(set(p11[:,0]))
-            for point in temp:
-                radius = np.linalg.norm(point) 
-                circle_x = radius * np.cos(theta)
-                circle_y = radius * np.sin(theta)
-
-                ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
-                    
-            ax.set_zlim(-a, a*2)
-            ax.set_title("3D Bilayer Graphene with Rotations")
-            ax.axis('equal')
-            ax.legend()
-            ax.view_init(0,0,180)
-            if(save):
-                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}_rotation_locus.pdf')
-            plt.show()
-        elif self.lattice_type == "Triangle":
-            p11 = self.generate_lattice_points()
-            p22 = self.generate_rotated_points(degrees)
-            
-
-            fig = plt.figure(figsize=(10,10))
-            ax = fig.add_subplot(111, projection="3d")
-
-            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
-
-            lattice_shift_x = self.lattice_distance*0.5
-            lattice_shift_y = self.lattice_distance*np.sqrt(3)/6
-
-            p22[:,0] = p22[:,0]-lattice_shift_x
-            p22[:,1] = p22[:,1]-lattice_shift_y
-
-            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
-            
-            theta = np.linspace(0, np.pi/2, 100)
-            temp = list(set(p11[:,0]))
-            for point in temp:
-                radius = np.linalg.norm(point) 
-                circle_x = radius * np.cos(theta)
-                circle_y = radius * np.sin(theta)
-
-                ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
-
-            ax.set_zlim(-a, a*2)
-            ax.set_title("Triangular Bilayer with Rotations")
-            ax.axis('equal')
-            ax.legend()
-            ax.view_init(0,0,180)
-            if(save):
-                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}_rotation_locus.pdf')
-            plt.show()
+            points, points2 = self.generate_lattice_points()
         else:
-            p11 = self.generate_lattice_points()
-            p22 = self.generate_rotated_points(degrees)
-            
+            points = self.generate_lattice_points()
+            points2 = None
 
-            fig = plt.figure(figsize=(10,10))
-            ax = fig.add_subplot(111, projection="3d")
+        # Initialize plot
+        fig, ax = plt.subplots(figsize=(8, 8))
+        ax.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50, label="Lattice Points")
+        if points2 is not None:
+            ax.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50, label="Basis Points")
 
-            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
+        # Get lattice vectors
+        a1 = self.vectors[0]
+        a2 = self.vectors[1] if len(self.vectors) > 1 else np.array([0, 0])  # Use zero vector if only one vector exists
 
-            lattice_shift_x = self.lattice_distance*0.5
-            lattice_shift_y = self.lattice_distance*0.5
+        # Draw circles for twist angles
+        origin = np.array([0, 0])
+        for n in range(0, self.num_sites):  # Circle range from 0 to num_sites
+            radius_vector = n * (np.array(a1) + np.array(a2)) + np.array(a1)
+            radius = np.linalg.norm(radius_vector)
+            circle = plt.Circle(origin, radius, color="r", fill=False, alpha=0.3, lw=1.5)
+            ax.add_artist(circle)
 
-            p22[:,0] = p22[:,0]-lattice_shift_x
-            p22[:,1] = p22[:,1]-lattice_shift_y
+        # Set axis limits and aspect ratio
+        max_extent = max(np.linalg.norm(n * (a1 + a2) + a1) for n in range(0, self.num_sites + 1)) + self.lattice_distance
+        ax.set_xlim(-max_extent, max_extent)
+        ax.set_ylim(-max_extent, max_extent)
+        ax.set_aspect('equal', adjustable='datalim')  # Ensure equal aspect ratio
 
-            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
-            
-            theta = np.linspace(0, np.pi/2, 100)
-            temp = list(set(p11[:,0]))
-            for point in temp:
-                if point > 0:
-                    radius = np.linalg.norm(point) 
-                    circle_x = radius * np.cos(theta)
-                    circle_y = radius * np.sin(theta)
+        # Finalize plot
+        plt.title(f'{self.lattice_type} Lattice with Twist Circles')
+        if save:
+            plt.savefig(f'{self.lattice_type}_twist_circles.pdf')
+        plt.legend()
+        plt.show()
 
-                    ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
-                
-            ax.set_zlim(-a, a*2)
-            ax.set_title("Square Bilayer with Rotations")
-            ax.axis('equal')
-            ax.legend()
-            ax.view_init(0,0,180)
-            if(save):
-                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}_rotation_locus.pdf')
-            plt.show()
 
-    def plot_aligned_bilayer_rotation_locus(self, degrees, save):
-        a = 0.5
-        if self.lattice_type == "Hexagon":
-            p11,p12 = self.generate_lattice_points()
-            p21,p22 = self.generate_rotated_points(degrees)
-            
-
-            fig = plt.figure(figsize=(10,10))
-            ax = fig.add_subplot(111, projection="3d")
-
-            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
-            ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=5, label="B1")
-
-            ax.scatter(p21[:, 0], p21[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
-            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
-
-            theta = np.linspace(0, np.pi/2, 100)
-            temp = list(set(p11[:,0]))
-            for point in temp:
-                radius = np.linalg.norm(point) 
-                circle_x = radius * np.cos(theta)
-                circle_y = radius * np.sin(theta)
-
-                ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
-            
-                    
-            ax.set_zlim(-a, a*2)
-            ax.set_title("3D Bilayer Graphene with rotations (Aligned)")
-            ax.axis('equal')
-            ax.legend()
-            ax.view_init(0,0,180)
-            if(save):
-                plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}_rotation_locus.pdf')
-            plt.show()
-        else:
-            p11 = self.generate_lattice_points()
-            p22 = self.generate_rotated_points(degrees)
-
-            fig = plt.figure(figsize=(10,10))
-            ax = fig.add_subplot(111, projection="3d")
-
-            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
-            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
-
-            theta = np.linspace(0, np.pi/2, 100)
-            temp = list(set(p11[:,0]))
-            for point in temp:
-                radius = np.linalg.norm(point) 
-                circle_x = radius * np.cos(theta)
-                circle_y = radius * np.sin(theta)
-
-                ax.plot(circle_x, circle_y, a, 'r', alpha=0.1)
-                    
-            ax.set_zlim(-a, a*2)
-            ax.set_title(f"{self.lattice_type} Graphene Aligned with Rotations (Aligned)")
-            ax.axis('equal')
-            ax.legend()
-            ax.view_init(0,0,180)
-            if(save):
-                plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}_rotation_locus.pdf')
-            plt.show()
 
     def plot_bilayer_twist_animation(self, save):
         if self.lattice_type == "Hexagon":
@@ -494,6 +364,7 @@ class Lattice:
             else:
                 plt.show()
 
+    
    
     def __str__(self):
         """ Generic string output """

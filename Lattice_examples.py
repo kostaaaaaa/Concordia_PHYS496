@@ -4,7 +4,7 @@ import numpy as np
 
 """Initialized Parameters"""
 lattice_distance = 1.0
-lattice_sites = 10
+lattice_sites = 12
 lattice_degrees = 5
 save_state = False
 
@@ -25,14 +25,11 @@ lattice_hexagon = Lattice(lattice_distance, vectors_hexagon, basis_hexagon, latt
 """Plotting"""
 lattice_triangle.plot_bilayer(lattice_degrees, save=save_state)
 lattice_triangle.plot_bilayer_align(lattice_degrees, save=save_state)
+lattice_triangle.plot_lattice_with_twist_circles(save=save_state)
 
 lattice_square.plot_bilayer(lattice_degrees, save=save_state)
 lattice_square.plot_bilayer_align(lattice_degrees, save=save_state)
+lattice_square.plot_lattice_with_twist_circles(save=save_state)
 
-"""
 lattice_hexagon.plot_bilayer(lattice_degrees, save=save_state)
 lattice_hexagon.plot_bilayer_align(lattice_degrees, save=save_state)
-
-lattice_square.plot_bilayer_rotation_locus(5, save=save_state)
-lattice_square.plot_aligned_bilayer_rotation_locus(5, save=save_state)
-"""
