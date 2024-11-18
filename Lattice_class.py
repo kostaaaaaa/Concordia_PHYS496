@@ -318,6 +318,70 @@ class Lattice:
         plt.legend()
         plt.show()
 
+    def plot_lattice_with_twist_vectors(self, phi, save):
+        """ 
+        Plots 2D lattice structure with circles of radius n*(a_1+a_2)+a_1
+        and adds vectors u_1 and u_2 based on the user-defined angle phi.
+        """
+        # Determine lattice points
+        if self.lattice_type == "Hexagon":
+            points, points2 = self.generate_lattice_points()
+        else:
+            points = self.generate_lattice_points()
+            points2 = None
+
+        # Initialize plot
+        fig, ax = plt.subplots(figsize=(8, 8))
+        ax.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50, label="Lattice Points")
+        if points2 is not None:
+            ax.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50, label="Basis Points")
+
+        # Get lattice vectors
+        a1 = self.vectors[0]
+        a2 = self.vectors[1] if len(self.vectors) > 1 else np.array([0, 0])  # Use zero vector if only one vector exists
+
+        # Determine n based on lattice type and phi
+        cos_phi = np.cos(phi)
+        sin_phi = np.sin(phi)
+        if self.lattice_type == "Square":
+            n = np.round(-cos_phi / (cos_phi - sin_phi - 1))
+        elif self.lattice_type == "Triangle":
+            n = np.round((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
+        else:
+            raise ValueError("Lattice type not recognized for twist vector calculation.")
+
+        # Calculate u_1 and u_2
+        u1 = n * (a1 + a2) + a1
+        u2 = n * (a1 + a2) + a2
+
+        # Add vector arrows for u_1 and u_2
+        ax.quiver(0, 0, a1[0], a1[1], angles='xy', scale_units='xy', scale=1, width=0.005)
+        ax.quiver(0, 0, a2[0], a2[1], angles='xy', scale_units='xy', scale=1, width=0.005)
+        ax.quiver(0, 0, u1[0], u1[1], angles='xy', scale_units='xy', scale=1, color='g', width=0.005, label="u_1")
+        ax.quiver(0, 0, u2[0], u2[1], angles='xy', scale_units='xy', scale=1, color='m', width=0.005, label="u_2")
+
+        # Draw circles for twist angles
+        origin = np.array([0, 0])
+        for i in range(self.num_sites):  # Circle range from 0 to num_sites
+            radius_vector = i * (np.array(a1) + np.array(a2)) + np.array(a1)
+            radius = np.linalg.norm(radius_vector)
+            circle = plt.Circle(origin, radius, color="r", fill=False, alpha=0.3, lw=1.5)
+            ax.add_artist(circle)
+
+        # Set axis limits and aspect ratio
+        max_extent = max(np.linalg.norm(i * (a1 + a2) + a1) for i in range(self.num_sites)) + self.lattice_distance
+        ax.set_xlim(-max_extent, max_extent)
+        ax.set_ylim(-max_extent, max_extent)
+        ax.set_aspect('equal', adjustable='datalim')  # Ensure equal aspect ratio
+
+        # Finalize plot
+        plt.title(f'{self.lattice_type} Lattice with Twist Circles and Vectors')
+        plt.legend()
+        if save:
+            plt.savefig(f'{self.lattice_type}_vector_twist_circles.pdf')
+        plt.show()
+
+
 
 
     def plot_bilayer_twist_animation(self, save):
