@@ -381,9 +381,6 @@ class Lattice:
             plt.savefig(f'{self.lattice_type}_vector_twist_circles.pdf')
         plt.show()
 
-
-
-
     def plot_bilayer_twist_animation(self, save):
         if self.lattice_type == "Hexagon":
             return 0
