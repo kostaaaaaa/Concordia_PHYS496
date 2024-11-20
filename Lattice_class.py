@@ -117,6 +117,91 @@ class Lattice:
             return points, points2
         else:
             return points
+        
+    def generate_superlattice_reciprocal_points(self, degrees):
+        """ Generates reciprocal lattice points for the superlattice defined by the rotation angle """
+        phi = np.radians(degrees)
+        cos_phi = np.cos(phi)
+        sin_phi = np.sin(phi)
+        
+        # Determine n based on lattice type
+        if self.lattice_type == "Square":
+            n = np.round(-cos_phi / (cos_phi - sin_phi - 1))
+            factor = 2 * np.pi / (2 * n**2 + 2 * n + 1)
+            B1 = factor * np.array([(n + 1), n])
+            B2 = factor * np.array([-n, (n + 1)])
+        elif self.lattice_type == "Triangle":
+            n = np.round((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
+            factor = 2 * np.pi / (3 * n**2 + 3 * n + 1)
+            B1 = factor * np.array([(2 * n + 1), -1 / np.sqrt(3)])
+            B2 = factor * np.array([-n, (3 * n + 2) / np.sqrt(3)])
+        else:
+            raise ValueError("Superlattice reciprocal not defined for this lattice type.")
+        
+        # Generate points
+        points = []
+        for i in range(self.x_range[0], self.x_range[1]):
+            for j in range(self.y_range[0], self.y_range[1]):
+                displacement = i * B1 + j * B2
+                points.append(displacement)
+    
+        return np.array(points)
+
+    def plot_superlattice_reciprocal(self, degrees, save=False):
+        """ Plots the reciprocal lattice structure for the superlattice """
+        points = self.generate_superlattice_reciprocal_points(degrees)
+
+        plt.figure(figsize=(8, 8))
+        plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
+        plt.title(f'{self.lattice_type} Superlattice Reciprocal (Rotation: {degrees}°)')
+        plt.axis('equal')
+        if save:
+            plt.savefig(f'{self.lattice_type}_superlattice_reciprocal_{degrees}.pdf')
+        plt.show()
+
+    def plot_superlattice_reciprocal_with_vectors(self, degrees, save=False):
+        """ 
+        Plots the reciprocal lattice structure for the superlattice 
+        with the reciprocal lattice vectors B1 and B2 displayed.
+        """
+        phi = np.radians(degrees)
+        cos_phi = np.cos(phi)
+        sin_phi = np.sin(phi)
+        
+        # Determine n based on lattice type and calculate B1, B2
+        if self.lattice_type == "Square":
+            n = np.round(-cos_phi / (cos_phi - sin_phi - 1))
+            factor = 2 * np.pi / (2 * n**2 + 2 * n + 1)
+            B1 = factor * np.array([(n + 1), n])
+            B2 = factor * np.array([-n, (n + 1)])
+        elif self.lattice_type == "Triangle":
+            n = np.round((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
+            factor = 2 * np.pi / (3 * n**2 + 3 * n + 1)
+            B1 = factor * np.array([(2 * n + 1), -1 / np.sqrt(3)])
+            B2 = factor * np.array([-n, (3 * n + 2) / np.sqrt(3)])
+        else:
+            raise ValueError("Superlattice reciprocal not defined for this lattice type.")
+        
+        # Generate reciprocal points
+        points = self.generate_superlattice_reciprocal_points(degrees)
+
+        # Plot the points
+        plt.figure(figsize=(8, 8))
+        plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50, label="Reciprocal Points")
+
+        # Add vectors B1 and B2 using quiver
+        origin = np.array([0, 0])
+        plt.quiver(origin[0], origin[1], B1[0], B1[1], angles='xy', scale_units='xy', scale=1, color='r', width=0.005, label="B1")
+        plt.quiver(origin[0], origin[1], B2[0], B2[1], angles='xy', scale_units='xy', scale=1, color='g', width=0.005, label="B2")
+
+        # Configure the plot
+        plt.title(f'{self.lattice_type} Superlattice Reciprocal with Vectors (Rotation: {degrees}°)')
+        plt.axis('equal')
+        plt.legend()
+        if save:
+            plt.savefig(f'{self.lattice_type}_superlattice_reciprocal_vectors_{degrees}.pdf')
+        plt.show()
+
 
     def plot_lattice(self):
         """ Plots 2D lattice structure """
@@ -150,7 +235,7 @@ class Lattice:
         plt.axis('equal')
         plt.show()
     
-    def plot_bilayer(self, degrees, save):
+    def plot_bilayer(self, degrees, save=False):
         """ Plots 3D Bilayer Hexagon lattices (Atoms A1 and B2 overlap)"""
         a = 0.5 #vertical distance between layers
         if self.lattice_type == "Hexagon":
@@ -228,7 +313,7 @@ class Lattice:
                 plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
             plt.show()
     
-    def plot_bilayer_align(self, degrees, save):
+    def plot_bilayer_align(self, degrees, save=False):
         """Bilayer Plotting with no shift (Atoms A1 on A2, B1 on B2)"""
         a = 0.5
         if self.lattice_type == "Hexagon":
@@ -275,7 +360,7 @@ class Lattice:
                 plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
             plt.show()
 
-    def plot_lattice_with_twist_circles(self, save):
+    def plot_lattice_with_twist_circles(self, save=False):
         """ 
         Plots 2D lattice structure with circles of radius n*(a_1+a_2)+a_1 
         using lattice vectors. Number of circles determined by self.num_sites.
@@ -313,75 +398,80 @@ class Lattice:
 
         # Finalize plot
         plt.title(f'{self.lattice_type} Lattice with Twist Circles')
+        plt.legend()
+        plt.axis('equal')
         if save:
             plt.savefig(f'{self.lattice_type}_twist_circles.pdf')
-        plt.legend()
         plt.show()
 
-    def plot_lattice_with_twist_vectors(self, phi, save):
+    def plot_lattice_with_twist_vectors(self, degrees, save=False):
         """ 
-        Plots 2D lattice structure with circles of radius n*(a_1+a_2)+a_1
-        and adds vectors u_1 and u_2 based on the user-defined angle phi.
+        Plots 2D lattice structure with reciprocal lattice vectors B1 and B2 
+        for a twist defined by the rotation angle.
         """
-        # Determine lattice points
-        if self.lattice_type == "Hexagon":
-            points, points2 = self.generate_lattice_points()
+        phi = np.radians(degrees)
+        cos_phi = np.cos(phi)
+        sin_phi = np.sin(phi)
+        
+        # Determine n based on lattice type and calculate B1, B2
+        if self.lattice_type == "Square":
+            n = np.round(-cos_phi / (cos_phi - sin_phi - 1))
+            factor = 2 * np.pi / (2 * n**2 + 2 * n + 1)
+            B1 = factor * np.array([(n + 1), n])
+            B2 = factor * np.array([-n, (n + 1)])
+        elif self.lattice_type == "Triangle":
+            n = np.round((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
+            factor = 2 * np.pi / (3 * n**2 + 3 * n + 1)
+            B1 = factor * np.array([(2 * n + 1), -1 / np.sqrt(3)])
+            B2 = factor * np.array([-n, (3 * n + 2) / np.sqrt(3)])
         else:
-            points = self.generate_lattice_points()
+            raise ValueError("Twist vectors not defined for this lattice type.")
+
+        # Generate lattice points
+        points = self.generate_lattice_points()
+        if isinstance(points, tuple):  # Handle cases with basis points
+            points, points2 = points
+        else:
             points2 = None
 
         # Initialize plot
-        fig, ax = plt.subplots(figsize=(8, 8))
-        ax.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50, label="Lattice Points")
+        plt.figure(figsize=(8, 8))
+        plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50, label="Lattice Points")
         if points2 is not None:
-            ax.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50, label="Basis Points")
+            plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50, label="Basis Points")
 
-        # Get lattice vectors
         a1 = self.vectors[0]
         a2 = self.vectors[1] if len(self.vectors) > 1 else np.array([0, 0])  # Use zero vector if only one vector exists
-
-        # Determine n based on lattice type and phi
-        cos_phi = np.cos(phi)
-        sin_phi = np.sin(phi)
-        if self.lattice_type == "Square":
-            n = np.round(-cos_phi / (cos_phi - sin_phi - 1))
-        elif self.lattice_type == "Triangle":
-            n = np.round((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
-        else:
-            raise ValueError("Lattice type not recognized for twist vector calculation.")
-
-        # Calculate u_1 and u_2
-        u1 = n * (a1 + a2) + a1
-        u2 = n * (a1 + a2) + a2
-
-        # Add vector arrows for u_1 and u_2
-        ax.quiver(0, 0, a1[0], a1[1], angles='xy', scale_units='xy', scale=1, width=0.005)
-        ax.quiver(0, 0, a2[0], a2[1], angles='xy', scale_units='xy', scale=1, width=0.005)
-        ax.quiver(0, 0, u1[0], u1[1], angles='xy', scale_units='xy', scale=1, color='g', width=0.005, label="u_1")
-        ax.quiver(0, 0, u2[0], u2[1], angles='xy', scale_units='xy', scale=1, color='m', width=0.005, label="u_2")
-
-        # Draw circles for twist angles
+        
         origin = np.array([0, 0])
+        plt.quiver(origin[0], origin[1], a1[0], a1[1], angles='xy', scale_units='xy', scale=1, width=0.005)
+        plt.quiver(origin[0], origin[1], a2[0], a2[1], angles='xy', scale_units='xy', scale=1, width=0.005)
+        plt.quiver(origin[0], origin[1], B1[0], B1[1], angles='xy', scale_units='xy', scale=1, color='r', width=0.005, label="B1")
+        plt.quiver(origin[0], origin[1], B2[0], B2[1], angles='xy', scale_units='xy', scale=1, color='g', width=0.005, label="B2")
+
+        # Draw circles for twist visualization
         for i in range(self.num_sites):  # Circle range from 0 to num_sites
             radius_vector = i * (np.array(a1) + np.array(a2)) + np.array(a1)
             radius = np.linalg.norm(radius_vector)
             circle = plt.Circle(origin, radius, color="r", fill=False, alpha=0.3, lw=1.5)
-            ax.add_artist(circle)
+            plt.gca().add_artist(circle)
 
         # Set axis limits and aspect ratio
-        max_extent = max(np.linalg.norm(i * (a1 + a2) + a1) for i in range(self.num_sites)) + self.lattice_distance
-        ax.set_xlim(-max_extent, max_extent)
-        ax.set_ylim(-max_extent, max_extent)
-        ax.set_aspect('equal', adjustable='datalim')  # Ensure equal aspect ratio
+        max_extent = max(np.linalg.norm(i * (B1 + B2)) for i in range(self.num_sites)) + self.lattice_distance
+        plt.xlim(-max_extent, max_extent)
+        plt.ylim(-max_extent, max_extent)
+        plt.gca().set_aspect('equal', adjustable='datalim')  # Ensure equal aspect ratio
 
         # Finalize plot
-        plt.title(f'{self.lattice_type} Lattice with Twist Circles and Vectors')
+        plt.title(f'{self.lattice_type} Lattice with Twist Vectors (Rotation: {degrees}°)')
         plt.legend()
+        plt.axis('equal')
         if save:
-            plt.savefig(f'{self.lattice_type}_vector_twist_circles.pdf')
+            plt.savefig(f'{self.lattice_type}_twist_vectors_{degrees}.pdf')
         plt.show()
 
-    def plot_bilayer_twist_animation(self, save):
+
+    def plot_bilayer_twist_animation(self, save=False):
         if self.lattice_type == "Hexagon":
             return 0
         else:
@@ -425,8 +515,6 @@ class Lattice:
             else:
                 plt.show()
 
-    
-   
     def __str__(self):
         """ Generic string output """
         return "This is a "+self.lattice_type+" lattice"
