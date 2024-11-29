@@ -34,8 +34,8 @@ lattice_square.plot_lattice_with_twist_circles()
 
 lattice_hexagon.plot_bilayer(lattice_degrees)
 lattice_hexagon.plot_bilayer_align(lattice_degrees)
-lattice_triangle.plot_superlattice_reciprocal_with_vectors(lattice_degrees, save=save_state)
-lattice_square.plot_superlattice_reciprocal_with_vectors(lattice_degrees, save=save_state)
+lattice_triangle.plot_superlattice_reciprocal_with_vectors(lattice_degrees)
+lattice_square.plot_superlattice_reciprocal_with_vectors(lattice_degrees)
 
-lattice_triangle.plot_lattice_with_twist_vectors(lattice_degrees, save=save_state)
-lattice_square.plot_lattice_with_twist_vectors(lattice_degrees, save=save_state)
+lattice_triangle.plot_lattice_with_twist_vectors(lattice_degrees)
+lattice_square.plot_lattice_with_twist_vectors(lattice_degrees)
