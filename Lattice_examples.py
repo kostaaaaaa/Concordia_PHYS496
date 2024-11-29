@@ -3,8 +3,8 @@ import numpy as np
 
 
 """Initialized Parameters"""
-lattice_distance = 1.0
-lattice_sites = 8
+lattice_distance = 1
+lattice_sites = 10
 lattice_degrees = 5
 save_state = True
 

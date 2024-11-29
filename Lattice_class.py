@@ -33,6 +33,19 @@ class Lattice:
 
         return np.array([b1, b2])
     
+    def calculate_Reciprocal(self, v1, v2):
+        eq = np.array([[v1[0], v1[1], 0,     0],
+                      [v2[0], v2[1], 0,     0],
+                      [0,     0,     v1[0], v1[1]],
+                      [0,     0,     v2[0], v2[1]]])
+        ans = np.array([2 * np.pi, 0, 0, 2 * np.pi])
+
+        solution = np.linalg.solve(eq, ans)
+        b1 = solution[0:2]
+        b2 = solution[2:4]
+
+        return np.array([b1, b2])
+    
     def determine_lattice_type(self):
         """ Using the angle the vectors produce the lattice type is determined """
         angle = np.arccos(np.dot(self.vectors[0], self.vectors[1]) /(np.linalg.norm(self.vectors[0]) * np.linalg.norm(self.vectors[1])))
@@ -54,6 +67,26 @@ class Lattice:
                 nearestNeighbors.append(basis-vector)
                 nearestNeighbors.append(basis+vector)
         return np.array(nearestNeighbors)
+    
+    def generate_BZEdges(self, v1, v2):
+        if self.lattice_type == "Square":
+            bz_edges = [
+                    0.5 * (v1+v2),   
+                    0.5 * (v1-v2), 
+                    -0.5 * (v1+v2), 
+                    -0.5 * (v1-v2) 
+            ]
+        else:
+            bz_edges = [
+                    (1/3)*(2*v1+v2),  # Vertex 1
+                    (1/3)*(v1+2*v2),  # Vertex 2
+                    (1/3)*(-v1+v2), # Vertex 3
+                    (1/3)*(-2*v1-v2), # Vertex 4
+                    (1/3)*(-v1-2*v2), # Vertex 5
+                    (1/3)*(v1-v2)   # Vertex 6
+            ]
+        
+        return bz_edges
 
     def generate_lattice_points(self):
         """ Generate Lattice Points to use for plotting, takes into account the basis """
@@ -506,18 +539,8 @@ class Lattice:
                 B2 = factor * np.array([-n, (n + 1)])
 
                 # Correcting the square BZ vertices calculation
-                bz_edges = [
-                    0.5 * (b1+b2),   
-                    0.5 * (b1-b2), 
-                    -0.5 * (b1+b2), 
-                    -0.5 * (b1-b2) 
-                ]
-                bz2_edges = [
-                    0.5 * (B1+B2),   
-                    0.5 * (B1-B2), 
-                    -0.5 * (B1+B2), 
-                    -0.5 * (B1-B2) 
-                ]
+                bz_edges = self.generate_BZEdges(b1,b2)
+                bz2_edges = self.generate_BZEdges(B1,B2)
                 
                 # Plot the square BZ
                 for i in range(4):
@@ -536,21 +559,8 @@ class Lattice:
                 B1 = factor * np.array([(2 * n + 1), -1 / np.sqrt(3)])
                 B2 = factor * np.array([-n, (3 * n + 2) / np.sqrt(3)])
 
-                # Define the 6 hexagonal directions by rotating a1
-                angles = np.linspace(0, 2 * np.pi, 7)  # 6 directions
-                b_length = np.linalg.norm(b1+b2)
-                bz_edges = [(np.sqrt(3)/3) * b_length * np.array([np.cos(angle), np.sin(angle)]) for angle in angles]
-
-                bz2_edges = [
-                    (2/3 * B1[0] + 1/3 * B2[0], 2/3 * B1[1] + 1/3 * B2[1]),  # Vertex 2
-                    (1/3 * B1[0] + 2/3 * B2[0], 1/3 * B1[1] + 2/3 * B2[1]),  # Vertex 1
-                    
-                    (-1/3 * B1[0] + 1/3 * B2[0], -1/3 * B1[1] + 1/3 * B2[1]), # Vertex 3
-                    (-2/3 * B1[0] - 1/3 * B2[0], -2/3 * B1[1] - 1/3 * B2[1]), # Vertex 4
-                    (-1/3 * B1[0] - 2/3 * B2[0], -1/3 * B1[1] - 2/3 * B2[1]), # Vertex 5
-                    (1/3 * B1[0] - 1/3 * B2[0], 1/3 * B1[1] - 1/3 * B2[1])    # Vertex 6
-                ]
-                
+                bz_edges = self.generate_BZEdges(b1,b2)
+                bz2_edges = self.generate_BZEdges(B1,B2)
                 
                 # Plot the hexagon edges
                 for i in range(len(bz_edges)):
@@ -604,55 +614,47 @@ class Lattice:
             plt.show()
 
     def plot_BZ_difference(self, degrees, save=False):
-        a1 = self.reciprocal_vectors[0]
-        a2 = self.reciprocal_vectors[1]
+        b1 = self.reciprocal_vectors[0]
+        b2 = self.reciprocal_vectors[1]
+
+        a1 = self.vectors[0]
+        a2 = self.vectors[1]
         angle = np.radians(degrees)
-        rot_matrix = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
-        rota1 = rot_matrix.dot(a1)
-        rota2 = rot_matrix.dot(a2)
+        rot_matrix = np.array([[np.cos(-angle), -np.sin(-angle)], [np.sin(-angle), np.cos(-angle)]])
+        rota1 = rot_matrix @ a1
+        rota2 = rot_matrix @ a2
+
+        rotB = self.calculate_Reciprocal(rota1,rota2)
+
+        rotb1 = rotB[0]
+        rotb2 = rotB[1]
 
         cos_phi = np.cos(angle)
         sin_phi = np.sin(angle)
 
-        
         fig, ax = plt.subplots(figsize=(10, 10))
         ax.set_title(f'{self.lattice_type} Brillouin Zone Pattern')
 
         if self.lattice_type == "Square":
-            n = np.round(-cos_phi / (cos_phi - sin_phi - 1))
+            n = np.ceil(-cos_phi / (cos_phi - sin_phi - 1))
             factor = 2 * np.pi / (2 * n**2 + 2 * n + 1)
             B1 = factor * np.array([(n + 1), n])
             B2 = factor * np.array([-n, (n + 1)])
         elif self.lattice_type == "Triangle":
             n = np.round((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
-            factor = 2 * np.pi / (3 * n**2 + 3 * n + 1)
+            factor = (2 * np.pi) / (3 * (n**2) + 3 * n + 1)
             B1 = factor * np.array([(2 * n + 1), -1 / np.sqrt(3)])
             B2 = factor * np.array([-n, (3 * n + 2) / np.sqrt(3)])
         else:
             raise ValueError("Twist vectors not defined for this lattice type.")
         
-        grid_size = int(np.round(n))+1
+        grid_size = int(n+1)
 
         if self.lattice_type =="Square":
             
-            bz_edges = [
-                    0.5 * (a1+a2),   
-                    0.5 * (a1-a2), 
-                    -0.5 * (a1+a2), 
-                    -0.5 * (a1-a2) 
-                ]
-            bz2_edges = [
-                        0.5 * (rota1+rota2),   
-                        0.5 * (rota1-rota2), 
-                        -0.5 * (rota1+rota2), 
-                        -0.5 * (rota1-rota2) 
-                    ]
-            bz3_edges = [
-                0.5 * (B1+B2),  
-                    0.5 * (B1-B2), 
-                    -0.5 * (B1+B2), 
-                    -0.5 * (B1-B2) 
-            ]
+            bz_edges = self.generate_BZEdges(b1,b2)
+            bz2_edges = self.generate_BZEdges(rotb1,rotb2)
+            bz3_edges = self.generate_BZEdges(B1,B2)
                     
                     # Plot the square BZ
             for i in range(4):
@@ -671,12 +673,35 @@ class Lattice:
                     for k in range(len(bz3_edges)):
                         start = bz3_edges[k] + translation
                         end = bz3_edges[(k + 1) % len(bz3_edges)] + translation
-                        ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.5, 0.5, 0.5), label="Superlattice BZ" if i == -grid_size and j == -grid_size and k == 0 else "")
+                        ax.plot([start[0], end[0]], [start[1], end[1]], '-', color="k", linewidth=0.25 , label="Superlattice BZ" if i == -grid_size and j == -grid_size and k == 0 else "")
+        
+        elif self.lattice_type=="Triangle":
 
-        ax.set_aspect('equal', 'box')
+            bz_edges = self.generate_BZEdges(b1,b2)
+            bz2_edges = self.generate_BZEdges(rotb1,rotb2)
+            bz3_edges = self.generate_BZEdges(B1,B2)
+            
+            for i in range(len(bz_edges)):
+                        start = bz_edges[i]
+                        end = bz_edges[(i + 1) % len(bz_edges)]  # Connect back to the first point to form the square
+                        ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.2, 0.5, 0.8), label="Original BZ" if i == 0 else "")
+
+            for i in range(len(bz2_edges)):
+                        start = bz2_edges[i]
+                        end = bz2_edges[(i + 1) % len(bz2_edges)]  # Connect back to the first point to form the square
+                        ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="Rotated BZ" if i == 0 else "")
+
+            for i in range(-grid_size, grid_size + 1):
+                for j in range(-grid_size, grid_size + 1):
+                    translation = i * B1 + j * B2
+                    for k in range(len(bz3_edges)):
+                        start = bz3_edges[k] + translation
+                        end = bz3_edges[(k + 1) % len(bz3_edges)] + translation
+                        ax.plot([start[0], end[0]], [start[1], end[1]], '-', color="k", linewidth=0.25 , label="Superlattice BZ" if i == -grid_size and j == -grid_size and k == 0 else "")
         plt.legend()
+        if save:
+            plt.savefig(f"{self.lattice_type}_BZ_diff.pdf")
         plt.show()
-
     
     def plot_bilayer_twist_animation(self, save=False):
         if self.lattice_type == "Hexagon":
