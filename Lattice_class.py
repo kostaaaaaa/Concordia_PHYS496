@@ -52,8 +52,10 @@ class Lattice:
         angle_deg = np.degrees(angle)
         if np.isclose(angle_deg, 90):
             return "Square"
-        elif np.isclose(angle_deg, 60) and len(self.basis)>1:
+        elif np.isclose(angle_deg, 60) and len(self.basis)==2:
             return "Hexagon"
+        elif np.isclose(angle_deg, 60) and len(self.basis)>2:
+            return "Kagome"
         elif np.isclose(angle_deg, 60):
             return "Triangle"
         else:
@@ -92,16 +94,23 @@ class Lattice:
         """ Generate Lattice Points to use for plotting, takes into account the basis """
         points = []
         points2 = []
+        points3 = []
 
         for i in range(self.x_range[0], self.x_range[1]):
             for j in range(self.y_range[0], self.y_range[1]):
                 displacement = i * self.vectors[0] + j * self.vectors[1]
                 points.append(displacement + self.basis[0])
-                if len(self.basis) > 1:
+                if len(self.basis)>1:
                     points2.append(displacement + self.basis[1])
+                if len(self.basis) == 3:
+                    points3.append(displacement + self.basis[2])
 
         points = np.array(points)
-        if points2:
+        if points3:
+            points3 = np.array(points3)
+            points2 = np.array(points2)
+            return points, points2, points3
+        elif points2 and len(self.basis)==2:
             points2 = np.array(points2)
             return points, points2
         else:
@@ -113,6 +122,7 @@ class Lattice:
         rot_matrix = np.array([[np.cos(angle),-np.sin(angle)],[np.sin(angle),np.cos(angle)]])
         points = []
         points2 = []
+        points3 = []
 
         rot_vectors = []
         for a in self.vectors:
@@ -124,9 +134,15 @@ class Lattice:
                 points.append(displacement + self.basis[0])
                 if len(self.basis) > 1:
                     points2.append(displacement + self.basis[1])
+                if len(self.basis) ==3:
+                    points3.append(displacement + self.basis[1])
 
         points = np.array(points)
-        if points2:
+        if points3:
+            points3 = np.array(points3)
+            points2 = np.array(points2)
+            return points, points2, points3
+        elif points2 and len(self.basis)==2:
             points2 = np.array(points2)
             return points, points2
         else:
@@ -238,16 +254,20 @@ class Lattice:
 
     def plot_lattice(self):
         """ Plots 2D lattice structure """
+        plt.figure(figsize=(8, 8))
         if self.lattice_type=="Hexagon":
             points, points2 = self.generate_lattice_points()
+            plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
+            plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
+        elif self.lattice_type =="Kagome":
+            points, points2, points3 = self.generate_lattice_points()
+            plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
+            plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
+            plt.scatter(points3[:, 0], points3[:, 1], color=(0.2, 0.5, 0.2, 0.5), s=50)
         else:
             points = self.generate_lattice_points()
+            plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
 
-        plt.figure(figsize=(8, 8))
-        plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
-
-        if len(self.basis) > 1:
-            plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
         plt.title(f'{self.lattice_type} Lattice')
         plt.axis('equal')
         plt.show()
@@ -271,13 +291,11 @@ class Lattice:
     def plot_bilayer(self, degrees, save=False):
         """ Plots 3D Bilayer Hexagon lattices (Atoms A1 and B2 overlap)"""
         a = 0.5 #vertical distance between layers
+        fig = plt.figure(figsize=(10,10))
+        ax = fig.add_subplot(111, projection="3d")
         if self.lattice_type == "Hexagon":
             p11,p12 = self.generate_lattice_points()
             p21,p22 = self.generate_rotated_points(degrees)
-            
-
-            fig = plt.figure(figsize=(10,10))
-            ax = fig.add_subplot(111, projection="3d")
 
             ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
             ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=5, label="B1")
@@ -287,47 +305,37 @@ class Lattice:
 
             ax.scatter(p21[:, 0]-lattice_shift_x, p21[:, 1]-lattice_shift_y,a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
             ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
-            
-                    
-            ax.set_zlim(-a, a*2)
-            ax.set_title("3D Bilayer Graphene")
-            ax.axis('equal')
-            ax.legend()
-            ax.view_init(90,90,180)
-            if(save):
-                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
-            plt.show()
+
+        elif self.lattice_type == "Kagome":
+            p11, p12, p13 = self.generate_lattice_points()
+            p21, p22, p23 = self.generate_rotated_points(degrees)
+
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
+            ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=5, label="B1")
+            ax.scatter(p13[:, 0], p13[:, 1],0, color=(0.2, 0.5, 0.2, 0.5), s=5, label="C1")
+
+            lattice_shift_x = self.lattice_distance*0.5
+            lattice_shift_y = self.lattice_distance*np.sqrt(3)/4
+
+            ax.scatter(p21[:, 0]-lattice_shift_x, p21[:, 1]-lattice_shift_y,a, color=(0.1, 0.5, 0.5,0.5), s=5, label="A2")
+            ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
+            ax.scatter(p23[:, 0]-lattice_shift_x, p23[:, 1]-lattice_shift_y,a, color=(0.5, 0.1, 0.5, 0.5), s=5, label="C2")
+
+        
         elif self.lattice_type == "Triangle":
             p11 = self.generate_lattice_points()
             p22 = self.generate_rotated_points(degrees)
             
-
-            fig = plt.figure(figsize=(10,10))
-            ax = fig.add_subplot(111, projection="3d")
-
             ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
 
             lattice_shift_x = self.lattice_distance*0.5
             lattice_shift_y = self.lattice_distance*np.sqrt(3)/4
 
             ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
-            
-                    
-            ax.set_zlim(-a, a*2)
-            ax.set_title("Triangular Bilayer")
-            ax.axis('equal')
-            ax.legend()
-            ax.view_init(90,90,180)
-            if(save):
-                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
-            plt.show()
+             
         else:
             p11 = self.generate_lattice_points()
             p22 = self.generate_rotated_points(degrees)
-            
-
-            fig = plt.figure(figsize=(10,10))
-            ax = fig.add_subplot(111, projection="3d")
 
             ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
 
@@ -335,63 +343,61 @@ class Lattice:
             lattice_shift_y = self.lattice_distance*0.5
 
             ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=(0.5, 0.5, 0.2,0.5), s=10, label="B2")
-            
-                    
-            ax.set_zlim(-a, a*2)
-            ax.set_title("Square Bilayer")
-            ax.axis('equal')
-            ax.legend()
-            ax.view_init(90,90,180)
-            if(save):
-                plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
-            plt.show()
+
+        ax.set_zlim(-a, a*2)
+        ax.set_title(f"3D Bilayer {self.lattice_type}")
+        ax.axis('equal')
+        ax.legend()
+        ax.view_init(90,90,180)
+        if(save):
+            plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
+        plt.show()
     
     def plot_bilayer_align(self, degrees, save=False):
         """Bilayer Plotting with no shift (Atoms A1 on A2, B1 on B2)"""
         a = 0.5
+        fig = plt.figure(figsize=(10,10))
+        ax = fig.add_subplot(111, projection="3d")
+
         if self.lattice_type == "Hexagon":
             p11,p12 = self.generate_lattice_points()
             p21,p22 = self.generate_rotated_points(degrees)
-            
-
-            fig = plt.figure(figsize=(10,10))
-            ax = fig.add_subplot(111, projection="3d")
-
+        
             ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
             ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=5, label="B1")
 
             ax.scatter(p21[:, 0], p21[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
             ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
-            
-                    
-            ax.set_zlim(-a, a*2)
-            ax.set_title("3D Bilayer Graphene")
-            ax.axis('equal')
-            ax.legend()
-            ax.view_init(90,90,180)
-            if(save):
-                plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
-            plt.show()
+        
+        elif self.lattice_type == "Kagome":
+            p11, p12, p13 = self.generate_lattice_points()
+            p21, p22, p23 = self.generate_rotated_points(degrees)
+
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
+            ax.scatter(p12[:, 0], p12[:, 1],0, color=(0.5, 0.1, 0.2, 0.5), s=5, label="B1")
+            ax.scatter(p13[:, 0], p13[:, 1],0, color=(0.2, 0.5, 0.2, 0.5), s=5, label="C1")
+
+            ax.scatter(p21[:, 0], p21[:, 1],a, color=(0.1, 0.5, 0.5,0.5), s=5, label="A2")
+            ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.5, 0.5, 0.2,0.5), s=5, label="B2")
+            ax.scatter(p23[:, 0], p23[:, 1],a, color=(0.5, 0.1, 0.5, 0.5), s=5, label="C2")
+
         else:
             p11 = self.generate_lattice_points()
             p22 = self.generate_rotated_points(degrees)
-
-            fig = plt.figure(figsize=(10,10))
-            ax = fig.add_subplot(111, projection="3d")
 
             ax.scatter(p11[:, 0], p11[:, 1],0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1")
 
             ax.scatter(p22[:, 0], p22[:, 1],a, color=(0.1, 0.5, 0.2,0.5), s=5, label="A2")
             
-                    
-            ax.set_zlim(-a, a*2)
-            ax.set_title(f"{self.lattice_type} Graphene Aligned")
-            ax.axis('equal')
-            ax.legend()
-            ax.view_init(90,90,180)
-            if(save):
-                plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
-            plt.show()
+
+        ax.set_zlim(-a, a*2)
+        ax.set_title("3D Bilayer Graphene")
+        ax.axis('equal')
+        ax.legend()
+        ax.view_init(90,90,180)
+        if(save):
+            plt.savefig(f'{self.lattice_type}_aligned_bilayer_{degrees}.pdf')
+        plt.show()
 
     def plot_lattice_with_twist_circles(self, save=False):
         """ 
@@ -401,15 +407,21 @@ class Lattice:
         # Determine lattice points
         if self.lattice_type == "Hexagon":
             points, points2 = self.generate_lattice_points()
+            points3 = None
+        elif self.lattice_type == "Kagome":
+            points, points2, points3 = self.generate_lattice_points()
         else:
             points = self.generate_lattice_points()
             points2 = None
+            points3 = None
 
         # Initialize plot
         fig, ax = plt.subplots(figsize=(8, 8))
         ax.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50, label="Lattice Points")
         if points2 is not None:
             ax.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50, label="Basis Points")
+        if points3 is not None:
+            ax.scatter(points3[:, 0], points3[:, 1], color=(0.2, 0.5, 0.2, 0.5), s=50, label="Basis Points")
 
         # Get lattice vectors
         a1 = self.vectors[0]
@@ -636,7 +648,7 @@ class Lattice:
         ax.set_title(f'{self.lattice_type} Brillouin Zone Pattern')
 
         if self.lattice_type == "Square":
-            n = np.ceil(-cos_phi / (cos_phi - sin_phi - 1))
+            n = np.round(-cos_phi / (cos_phi - sin_phi - 1))
             factor = 2 * np.pi / (2 * n**2 + 2 * n + 1)
             B1 = factor * np.array([(n + 1), n])
             B2 = factor * np.array([-n, (n + 1)])
@@ -704,14 +716,14 @@ class Lattice:
         plt.show()
     
     def plot_bilayer_twist_animation(self, save=False):
+        fig = plt.figure(figsize=(10, 10))
+        ax = fig.add_subplot(111, projection="3d")
         if self.lattice_type == "Hexagon":
             return 0
         else:
             max_angle = 90
             # Set up figure and 3D plot
-            fig = plt.figure(figsize=(10, 10))
-            ax = fig.add_subplot(111, projection="3d")
-
+            
             p11 = self.generate_lattice_points()
             a = 1
 
@@ -720,7 +732,6 @@ class Lattice:
             
             # Plot variable to store rotated points
             top_layer_plot, = ax.plot([], [], [], 'o', color=(0.1, 0.5, 0.2, 0.5), markersize=5, label="A2 (Top Layer)")
-
             # Set plot limits and labels
             ax.axis('equal')
             ax.set_zlim(-a, a * 2)
