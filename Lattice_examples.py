@@ -27,6 +27,7 @@ lattice_hexagon = Lattice(lattice_distance, vectors_hexagon, basis_hexagon, latt
 lattice_kagome = Lattice(lattice_distance, vectors_kagome, basis_kagome, lattice_sites)
 
 """Plotting"""
+<<<<<<< HEAD
 """
 lattice_triangle.plot_bilayer(lattice_degrees)
 lattice_triangle.plot_bilayer_align(lattice_degrees)
@@ -46,3 +47,20 @@ lattice_triangle.plot_lattice_with_twist_vectors(lattice_degrees)
 lattice_square.plot_lattice_with_twist_vectors(lattice_degrees)
 """
 lattice_kagome.plot_lattice_with_twist_circles()
+=======
+lattice_triangle.plot_lattice()
+lattice_triangle.plot_bilayer(degrees= lattice_degrees)
+lattice_triangle.plot_bilayer_align(degrees= lattice_degrees)
+
+lattice_square.plot_lattice()
+lattice_square.plot_bilayer(degrees= lattice_degrees)
+lattice_square.plot_bilayer_align(degrees= lattice_degrees)
+
+lattice_hexagon.plot_lattice()
+lattice_hexagon.plot_bilayer(degrees= lattice_degrees)
+lattice_hexagon.plot_bilayer_align(degrees= lattice_degrees)
+
+lattice_kagome.plot_lattice()
+lattice_kagome.plot_bilayer(degrees= lattice_degrees)
+lattice_kagome.plot_bilayer_align(degrees= lattice_degrees)
+>>>>>>> 696e6cb (2024-12-01)
