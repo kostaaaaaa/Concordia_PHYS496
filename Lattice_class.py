@@ -288,11 +288,7 @@ class Lattice:
         plt.axis('equal')
         plt.show()
     
-<<<<<<< HEAD
     def plot_bilayer(self, degrees, save=False):
-=======
-    def plot_bilayer(self, degrees=0, save=False):
->>>>>>> 696e6cb (2024-12-01)
         """ Plots 3D Bilayer Hexagon lattices (Atoms A1 and B2 overlap)"""
         a = 0.5 #vertical distance between layers
         fig = plt.figure(figsize=(10,10))
@@ -357,11 +353,7 @@ class Lattice:
             plt.savefig(f'{self.lattice_type}_bilayer_{degrees}.pdf')
         plt.show()
     
-<<<<<<< HEAD
     def plot_bilayer_align(self, degrees, save=False):
-=======
-    def plot_bilayer_align(self, degrees=0, save=False):
->>>>>>> 696e6cb (2024-12-01)
         """Bilayer Plotting with no shift (Atoms A1 on A2, B1 on B2)"""
         a = 0.5
         fig = plt.figure(figsize=(10,10))
