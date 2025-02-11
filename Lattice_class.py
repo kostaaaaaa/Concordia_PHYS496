@@ -34,6 +34,7 @@ class Lattice:
         return np.array([b1, b2])
     
     def calculate_Reciprocal(self, v1, v2):
+        """ Calculate the Reciporcal of given lattice vectors """
         eq = np.array([[v1[0], v1[1], 0,     0],
                       [v2[0], v2[1], 0,     0],
                       [0,     0,     v1[0], v1[1]],
@@ -71,6 +72,7 @@ class Lattice:
         return np.array(nearestNeighbors)
     
     def generate_BZEdges(self, v1, v2):
+        """ Brillouin Zone Edges to Plot Brillouin Zone within Reciporcal Space """
         if self.lattice_type == "Square":
             bz_edges = [
                     0.5 * (v1+v2),   
@@ -272,6 +274,50 @@ class Lattice:
         plt.axis('equal')
         plt.show()
 
+    def plot_lattice_WC(self, save=False):
+        """ Plots 2D Lattice Structure with Wigner Cell """
+        plt.figure(figsize=(8, 8))
+        if self.lattice_type=="Hexagon":
+            points, points2 = self.generate_lattice_points()
+            plt.scatter(points[:,0], points[:,1], color=(0.1,0.2,0.5,0.5), s=50)
+            plt.scatter(points2[:,0], points2[:,1], color=(0.5,0.1,0.2,0.5), s=50)
+
+            WC_edges = [[0.5,np.sqrt(3)/6],
+                        [0.5,-np.sqrt(3)/6],
+                        [0, -np.sqrt(3)/3],
+                        [-0.5,-np.sqrt(3)/6],
+                        [-0.5,np.sqrt(3)/6],
+                        [0,np.sqrt(3)/3]]
+            for i in range(len(WC_edges)):
+                start = WC_edges[i]
+                end = WC_edges[(i + 1) % len(WC_edges)]  
+                plt.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.2, 0.5, 0.8), label="Original BZ" if i == 0 else "")
+        plt.title(f'{self.lattice_type} Lattice with Wigner Cell')
+        plt.axis('equal')
+        plt.show()
+
+    def plot_lattice_nthWC(self, n, save=False):
+        """ Plots 2D Lattice Structure with Larger Wigner Cells """
+        plt.figure(figsize=(8, 8))
+        if self.lattice_type=="Hexagon":
+            points, points2 = self.generate_lattice_points()
+            plt.scatter(points[:,0], points[:,1], color=(0.1,0.2,0.5,0.5), s=50)
+            plt.scatter(points2[:,0], points2[:,1], color=(0.5,0.1,0.2,0.5), s=50)
+
+            WC_edges = [[n*0.5,n*np.sqrt(3)/6],
+                        [n*0.5,n*-np.sqrt(3)/6],
+                        [0, n*-np.sqrt(3)/3],
+                        [n*-0.5,n*-np.sqrt(3)/6],
+                        [n*-0.5,n*np.sqrt(3)/6],
+                        [0,n*np.sqrt(3)/3]]
+            for i in range(len(WC_edges)):
+                start = WC_edges[i]
+                end = WC_edges[(i + 1) % len(WC_edges)]  
+                plt.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.2, 0.5, 0.8), label="Original BZ" if i == 0 else "")
+        plt.title(f'{self.lattice_type} Lattice with Wigner Cell (n={n})')
+        plt.axis('equal')
+        plt.show() 
+
     def plot_reciprocal(self):
         """ Plots reciprocal lattice strucutre """
         if self.lattice_type=="Hexagon":
@@ -404,7 +450,6 @@ class Lattice:
         Plots 2D lattice structure with circles of radius n*(a_1+a_2)+a_1 
         using lattice vectors. Number of circles determined by self.num_sites.
         """
-        # Determine lattice points
         if self.lattice_type == "Hexagon":
             points, points2 = self.generate_lattice_points()
             points3 = None
@@ -415,7 +460,6 @@ class Lattice:
             points2 = None
             points3 = None
 
-        # Initialize plot
         fig, ax = plt.subplots(figsize=(8, 8))
         ax.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50, label="Lattice Points")
         if points2 is not None:
@@ -423,11 +467,9 @@ class Lattice:
         if points3 is not None:
             ax.scatter(points3[:, 0], points3[:, 1], color=(0.2, 0.5, 0.2, 0.5), s=50, label="Basis Points")
 
-        # Get lattice vectors
         a1 = self.vectors[0]
         a2 = self.vectors[1]
 
-        # Draw circles for twist angles
         origin = np.array([0, 0])
         for n in range(0, self.num_sites):  # Circle range from 0 to num_sites
             radius_vector = n * (np.array(a1) + np.array(a2)) + np.array(a1)
@@ -435,13 +477,11 @@ class Lattice:
             circle = plt.Circle(origin, radius, color="r", fill=False, alpha=0.3, lw=1.5)
             ax.add_artist(circle)
 
-        # Set axis limits and aspect ratio
         max_extent = max(np.linalg.norm(n * (a1 + a2) + a1) for n in range(0, self.num_sites + 1)) + self.lattice_distance
         ax.set_xlim(-max_extent, max_extent)
         ax.set_ylim(-max_extent, max_extent)
         ax.set_aspect('equal', adjustable='datalim')  # Ensure equal aspect ratio
 
-        # Finalize plot
         plt.title(f'{self.lattice_type} Lattice with Twist Circles')
         plt.legend()
         plt.axis('equal')
@@ -458,7 +498,6 @@ class Lattice:
         cos_phi = np.cos(phi)
         sin_phi = np.sin(phi)
         
-        # Determine n based on lattice type and calculate B1, B2
         if self.lattice_type == "Square":
             n = np.round(-cos_phi / (cos_phi - sin_phi - 1))
             factor = 2 * np.pi / (2 * n**2 + 2 * n + 1)
@@ -472,14 +511,12 @@ class Lattice:
         else:
             raise ValueError("Twist vectors not defined for this lattice type.")
 
-        # Generate lattice points
         points = self.generate_lattice_points()
         if isinstance(points, tuple):  # Handle cases with basis points
             points, points2 = points
         else:
             points2 = None
 
-        # Initialize plot
         plt.figure(figsize=(8, 8))
         plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50, label="Lattice Points")
         if points2 is not None:
@@ -494,20 +531,17 @@ class Lattice:
         plt.quiver(origin[0], origin[1], B1[0], B1[1], angles='xy', scale_units='xy', scale=1, color='r', width=0.005, label="B1")
         plt.quiver(origin[0], origin[1], B2[0], B2[1], angles='xy', scale_units='xy', scale=1, color='g', width=0.005, label="B2")
 
-        # Draw circles for twist visualization
         for i in range(self.num_sites):  # Circle range from 0 to num_sites
             radius_vector = i * (np.array(a1) + np.array(a2)) + np.array(a1)
             radius = np.linalg.norm(radius_vector)
             circle = plt.Circle(origin, radius, color="r", fill=False, alpha=0.3, lw=1.5)
             plt.gca().add_artist(circle)
 
-        # Set axis limits and aspect ratio
         max_extent = max(np.linalg.norm(i * (B1 + B2)) for i in range(self.num_sites)) + self.lattice_distance
         plt.xlim(-max_extent, max_extent)
         plt.ylim(-max_extent, max_extent)
         plt.gca().set_aspect('equal', adjustable='datalim')  # Ensure equal aspect ratio
 
-        # Finalize plot
         plt.title(f'{self.lattice_type} Lattice with Twist Vectors (Rotation: {degrees}°)')
         plt.legend()
         plt.axis('equal')
@@ -520,18 +554,15 @@ class Lattice:
         Animates the superlattice reciprocal lattice structure with vectors B1 and B2 
         as the twist angle spans from 0 to 90 degrees (phi: 0 to pi/2).
         """
-        # Prepare figure
         fig, ax = plt.subplots(figsize=(8, 8))
         ax.set_title(f'{self.lattice_type} Superlattice Reciprocal Comparison')
 
-        # Initialize plot elements
         points_scatter = ax.scatter([], [], color=(0.1, 0.2, 0.5, 0.5), s=15, label="Superlattice Points")
         quiver_a1 = ax.quiver(0, 0, 0, 0, angles='xy', scale_units='xy', scale=1, width=0.005, label="Original Reciprocal b1")
         quiver_a2 = ax.quiver(0, 0, 0, 0, angles='xy', scale_units='xy', scale=1, width=0.005, label="Original Reciprocal b2")
         quiver_b1 = ax.quiver(0, 0, 0, 0, angles='xy', scale_units='xy', scale=1, color='r', width=0.005, label="B1")
         quiver_b2 = ax.quiver(0, 0, 0, 0, angles='xy', scale_units='xy', scale=1, color='g', width=0.005, label="B2")
 
-        # Angle range: 0 to 90 degrees
         if self.lattice_type == "Square":
             phi_values = np.linspace(0.001, np.pi / 2, 200)
         elif self.lattice_type == "Triangle":
@@ -543,18 +574,15 @@ class Lattice:
             cos_phi = np.cos(phi)
             sin_phi = np.sin(phi)
 
-            # Determine n and calculate B1, B2
             if self.lattice_type == "Square":
                 n = -cos_phi / (cos_phi - sin_phi - 1)
                 factor = 2 * np.pi / (2 * n**2 + 2 * n + 1)
                 B1 = factor * np.array([(n + 1), n])
                 B2 = factor * np.array([-n, (n + 1)])
 
-                # Correcting the square BZ vertices calculation
                 bz_edges = self.generate_BZEdges(b1,b2)
                 bz2_edges = self.generate_BZEdges(B1,B2)
                 
-                # Plot the square BZ
                 for i in range(4):
                     start = bz_edges[i]
                     end = bz_edges[(i + 1) % 4]  # Connect back to the first point to form the square
@@ -574,7 +602,6 @@ class Lattice:
                 bz_edges = self.generate_BZEdges(b1,b2)
                 bz2_edges = self.generate_BZEdges(B1,B2)
                 
-                # Plot the hexagon edges
                 for i in range(len(bz_edges)):
                     start = bz_edges[i]
                     end = bz_edges[(i + 1) % len(bz_edges)]  # Connect back to the first point
@@ -589,7 +616,6 @@ class Lattice:
             else:
                 raise ValueError("Superlattice reciprocal not defined for this lattice type.")
 
-            # Generate superlattice reciprocal points
             points = []
             for i in range(self.x_range[0], self.x_range[1]):
                 for j in range(self.y_range[0], self.y_range[1]):
@@ -597,35 +623,30 @@ class Lattice:
                     points.append(displacement)
             points = np.array(points)
 
-            # Update scatter points
             points_scatter.set_offsets(points)
 
-            # Update quivers
             quiver_a1.set_UVC(b1[0], b1[1])
             quiver_a2.set_UVC(b2[0], b2[1])
             quiver_b1.set_UVC(B1[0], B1[1])
             quiver_b2.set_UVC(B2[0], B2[1])
             
-            # Update title with current angle
             ax.set_title(f'{self.lattice_type} Superlattice Reciprocal Comparison (Phi = {np.degrees(phi):.2f}°)')
             return points_scatter, quiver_b1, quiver_b2
 
-        # Set plot limits
         max_extent = self.lattice_distance * self.num_sites
         ax.set_xlim(-max_extent, max_extent)
         ax.set_ylim(-max_extent, max_extent)
         ax.legend(loc="lower left")
 
-        # Create animation
         anim = FuncAnimation(fig, update, frames=len(phi_values), blit=False)
 
-        # Save or show the animation
         if save:
             anim.save(f'{self.lattice_type}_superlattice_reciprocal_difference_animation.gif', fps=20)
         else:
             plt.show()
 
     def plot_BZ_difference(self, degrees, save=False):
+        """ Plot to showcase the difference in Brillouin Zone for the Twisted System """
         b1 = self.reciprocal_vectors[0]
         b2 = self.reciprocal_vectors[1]
 
@@ -716,43 +737,36 @@ class Lattice:
         plt.show()
     
     def plot_bilayer_twist_animation(self, save=False):
+        """ Animation to showcase the twist of a bilayer """
         fig = plt.figure(figsize=(10, 10))
         ax = fig.add_subplot(111, projection="3d")
         if self.lattice_type == "Hexagon":
             return 0
         else:
             max_angle = 90
-            # Set up figure and 3D plot
             
             p11 = self.generate_lattice_points()
             a = 1
 
-            # Scatter plot for the bottom layer (fixed)
             ax.scatter(p11[:, 0], p11[:, 1], 0, color=(0.1, 0.2, 0.5, 0.5), s=5, label="A1 (Bottom Layer)")
             
-            # Plot variable to store rotated points
             top_layer_plot, = ax.plot([], [], [], 'o', color=(0.1, 0.5, 0.2, 0.5), markersize=5, label="A2 (Top Layer)")
-            # Set plot limits and labels
             ax.axis('equal')
             ax.set_zlim(-a, a * 2)
             ax.set_title(f"{self.lattice_type} Bilayer Rotation Animation")
             ax.legend()
             ax.view_init(90,90,180)
 
-            # Animation function
             def update(frame):
                 angle = frame  # Current rotation angle in degrees
                 p22 = self.generate_rotated_points(angle)
-                # Update the data for the top layer plot
                 top_layer_plot.set_data(p22[:, 0], p22[:, 1])
                 top_layer_plot.set_3d_properties(a)  # Set constant z for top layer
                 ax.set_title(f"Rotation Angle: {angle:.1f}°")
                 return top_layer_plot,
 
-            # Create the animation
             anim = FuncAnimation(fig, update, frames=np.linspace(0, max_angle, 100), blit=True)
 
-            # Save or show the animation
             if save:
                 anim.save(f'{self.lattice_type}_rotation_animation.mp4', fps=15)
             else:
