@@ -314,9 +314,55 @@ class Lattice:
                 start = WC_edges[i]
                 end = WC_edges[(i + 1) % len(WC_edges)]  
                 plt.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.2, 0.5, 0.8), label="Original BZ" if i == 0 else "")
-        plt.title(f'{self.lattice_type} Lattice with Wigner Cell (n={n})')
+        plt.title(f'{self.lattice_type} Lattice with Wigner Cell (s={n})')
         plt.axis('equal')
         plt.show() 
+
+    def plot_lattice_WC_BZ_comparison(self, n, save=False):
+        """ Plotting the difference in Wigner Cell and Brillouin Zone for a given n """
+        fig = plt.figure()
+        
+        gs = fig.add_gridspec(2,2)
+        ax1 = fig.add_subplot(gs[0,0])
+        ax2 = fig.add_subplot(gs[:,1])
+        ax3 = fig.add_subplot(gs[1,0])
+
+        if self.lattice_type=="Hexagon":
+            points, points2 = np.multiply(self.generate_reciprocal_points(),(1/n))
+            ax2.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
+            bz_edges = self.generate_BZEdges(self.reciprocal_vectors[0],self.reciprocal_vectors[1])
+            for i in range(len(bz_edges)):
+                        start = (1/n)*bz_edges[i]
+                        end = (1/n)*bz_edges[(i + 1) % len(bz_edges)]  # Connect back to the first point to form the square
+                        ax2.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.2, 0.5, 0.8), label="Original BZ" if i == 0 else "")
+            points, points2 = self.generate_lattice_points()
+            ax1.scatter(points[:,0], points[:,1], color=(0.1,0.2,0.5,0.5), s=50)
+            ax1.scatter(points2[:,0], points2[:,1], color=(0.5,0.1,0.2,0.5), s=50)
+            WC_edges = [[n*0.5,n*np.sqrt(3)/6],
+                        [n*0.5,n*-np.sqrt(3)/6],
+                        [0, n*-np.sqrt(3)/3],
+                        [n*-0.5,n*-np.sqrt(3)/6],
+                        [n*-0.5,n*np.sqrt(3)/6],
+                        [0,n*np.sqrt(3)/3]]
+            for i in range(len(WC_edges)):
+                start = WC_edges[i]
+                end = WC_edges[(i + 1) % len(WC_edges)]  
+                ax1.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.2, 0.5, 0.8), label="Original BZ" if i == 0 else "")
+            
+            s_vals = np.arange(0,10,1)
+            ax3.scatter(2*s_vals**2,s_vals)
+            ax3.scatter(2*n**2,n, color=(0.5,0.2,0.1,1))
+    
+        ax1.set_title(f'{self.lattice_type} Lattice with Wigner Cell (s={n})')
+        ax1.set_xlabel("x")
+        ax1.set_ylabel("y")
+        ax2.set_title(f'{self.lattice_type} Reciprocal Lattice with Brillouin Zone (s={n})')
+        ax2.set_xlabel("k_x")
+        ax2.set_ylabel("k_y")
+        ax3.set_title("Atoms per unit cell")
+        ax3.set_xlabel("Atoms")
+        ax3.set_ylabel("Integer s Values")
+        plt.show()
 
     def plot_reciprocal(self):
         """ Plots reciprocal lattice strucutre """
