@@ -7,7 +7,7 @@ basis = [[0,0],[0.5,np.sqrt(3)/6]]
 
 hex = Lattice(1,vectors,basis,10)
 
-hex.plot_lattice_WC_BZ_comparison(n=4)
+hex.animate_lattice_WC_BZ_comparison(n=8)
 """
 Here is the following pattern:
     n=1 points=2
