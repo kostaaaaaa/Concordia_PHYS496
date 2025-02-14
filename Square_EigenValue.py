@@ -3,27 +3,24 @@ import matplotlib.pyplot as plt
 from numpy.linalg import eig
 
 def delta(x, y):
-    return np.exp(-1j * (-x)) + np.exp(-1j * (x/2 + np.sqrt(3)*y/2)) + np.exp(-1j * (x/2 - np.sqrt(3)*y/2))
-
-def primeDelta(x, y):
-    return np.exp(1j * (-x)) + np.exp(1j * (x/2 + np.sqrt(3)*y/2)) + np.exp(1j * (x/2 - np.sqrt(3)*y/2))
+    return 2*np.cos(x/2)+2*np.cos(y/2)
 
 def H(x, y):
     t = 2
-    tprime = .5
+    tprime = 1
     return np.array([
         [0, -t * delta(x, y), -tprime, 0],
-        [-t * primeDelta(x, y), 0, 0, -tprime],
+        [-t * delta(x, y), 0, 0, -tprime],
         [-tprime, 0, 0, -t * delta(x, y)],
-        [0, -tprime, -t * primeDelta(x, y), 0]
-    ], dtype=complex)
+        [0, -tprime, -t * delta(x, y), 0]
+    ], dtype=complex) 
 
 def eigenvalues(x, y):
     H_matrix = H(x, y,)
     return eig(H_matrix)[0] 
 
-x_vals = np.linspace(-4, 4, 100)
-y_vals = np.linspace(-4, 4, 100)
+x_vals = np.linspace(-6, 6, 20)
+y_vals = np.linspace(-6, 6, 20)
 X, Y = np.meshgrid(x_vals, y_vals)
 
 Z1 = np.zeros_like(X, dtype=float)
@@ -44,9 +41,9 @@ ax.plot_surface(X, Y, Z2)
 ax.plot_surface(X, Y, Z3)
 ax.plot_surface(X, Y, Z4)
 
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-ax.set_zlabel('Energy')
+ax.set_xlabel(r'$ak_x$')
+ax.set_ylabel(r'$ak_y$')
+ax.set_zlabel(r'$\frac{Energy}{t}$')
 ax.set_title('Eigenvalues of the Hamiltonian')
 
 plt.show()
