@@ -274,6 +274,37 @@ class Lattice:
         plt.axis('equal')
         plt.show()
 
+    def plot_lattice_superlattice(self, n, save=False):
+        plt.figure(figsize=(8, 8))
+        if self.lattice_type=="Hexagon":
+            points, points2 = self.generate_lattice_points()
+            plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
+            plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
+        elif self.lattice_type =="Kagome":
+            points, points2, points3 = self.generate_lattice_points()
+            plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
+            plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
+            plt.scatter(points3[:, 0], points3[:, 1], color=(0.2, 0.5, 0.2, 0.5), s=50)
+        else:
+            points = self.generate_lattice_points()
+            plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
+            a1 = self.vectors[0]
+            a2 = self.vectors[1]
+
+            A1 = [ n+1,n ]
+            A2 = [ -n,n+1 ]
+        
+            origin = np.array([0, 0])
+            plt.quiver(origin[0], origin[1], a1[0], a1[1], angles='xy', scale_units='xy', scale=1, width=0.005)
+            plt.quiver(origin[0], origin[1], a2[0], a2[1], angles='xy', scale_units='xy', scale=1, width=0.005)
+            plt.quiver(origin[0], origin[1], A1[0], A1[1], angles='xy', scale_units='xy', scale=1, color='r', width=0.005, label="B1")
+            plt.quiver(origin[0], origin[1], A2[0], A2[1], angles='xy', scale_units='xy', scale=1, color='g', width=0.005, label="B2")
+            
+
+        plt.title(f'{self.lattice_type} Lattice')
+        plt.axis('equal')
+        plt.show()
+
     def plot_reciprocal(self):
         """ Plots reciprocal lattice strucutre """
         if self.lattice_type=="Hexagon":
