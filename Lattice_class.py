@@ -254,7 +254,7 @@ class Lattice:
         plt.show()
 
 
-    def plot_lattice(self):
+    def plot_lattice(self, save=False):
         """ Plots 2D lattice structure """
         plt.figure(figsize=(8, 8))
         if self.lattice_type=="Hexagon":
@@ -272,6 +272,10 @@ class Lattice:
 
         plt.title(f'{self.lattice_type} Lattice')
         plt.axis('equal')
+        plt.xlabel('x')
+        plt.ylabel('y')
+        if save:
+            plt.savefig(f'{self.lattice_type}_Lattice_Plot.pdf')
         plt.show()
 
     def plot_lattice_superlattice(self, n, save=False):

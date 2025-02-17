@@ -4,7 +4,7 @@ import numpy as np
 
 """Initialized Parameters"""
 lattice_distance = 1
-lattice_sites = 10
+lattice_sites = 5
 lattice_degrees = 5
 save_state = True
 
