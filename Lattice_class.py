@@ -284,6 +284,31 @@ class Lattice:
             points, points2 = self.generate_lattice_points()
             plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
             plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
+            a1 = self.vectors[0]
+            a2 = self.vectors[1]           
+            
+            A1 = [((3*n/2)+1), np.sqrt(3)*n/2]
+            A2 = [1/2, np.sqrt(3)*(n+1/2)]
+
+            origin = np.array([0, 0])
+            plt.quiver(origin[0], origin[1], a1[0], a1[1], angles='xy', scale_units='xy', scale=1, width=0.005)
+            plt.quiver(origin[0], origin[1], a2[0], a2[1], angles='xy', scale_units='xy', scale=1, width=0.005)
+            plt.quiver(origin[0], origin[1], A1[0], A1[1], angles='xy', scale_units='xy', scale=1, color=(0.1, 0.2, 0.5, 0.8), width=0.005)
+            plt.quiver(origin[0], origin[1], A2[0], A2[1], angles='xy', scale_units='xy', scale=1, color=(0.1, 0.2, 0.5, 0.8), width=0.005)
+
+            ws_edges = [[1/2*(n+1),np.sqrt(3)/2*(n+1/3)],
+                        [-n/2, np.sqrt(3)*(n/2+1/3)],
+                        [-1/2-n, 1/(2*np.sqrt(3))],
+                        [-1/2*(n+1),-np.sqrt(3)/2*(n+1/3)],
+                        [n/2, -np.sqrt(3)*(n/2+1/3)],
+                        [1/2+n, -1/(2*np.sqrt(3))]]                      
+                
+            for i in range(len(ws_edges)):
+                        start = ws_edges[i]
+                        end = ws_edges[(i + 1) % len(ws_edges)]  
+                        plt.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.2, 0.5, 0.8), label="Wigner Cell" if i == 0 else "")
+            
+
         elif self.lattice_type =="Kagome":
             points, points2, points3 = self.generate_lattice_points()
             plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
@@ -297,15 +322,24 @@ class Lattice:
 
             A1 = [ n+1,n ]
             A2 = [ -n,n+1 ]
-        
+            ws_edges = [[1/2,n+1/2],
+                        [-1/2-n,1/2],
+                        [-1/2,-1/2-n],
+                        [1/2+n,-1/2]]
+
+            for i in range(len(ws_edges)):
+                        start = ws_edges[i]
+                        end = ws_edges[(i + 1) % len(ws_edges)]  
+                        plt.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.2, 0.5, 0.8), label="Wigner Cell" if i == 0 else "")
+            
+            
             origin = np.array([0, 0])
             plt.quiver(origin[0], origin[1], a1[0], a1[1], angles='xy', scale_units='xy', scale=1, width=0.005)
             plt.quiver(origin[0], origin[1], a2[0], a2[1], angles='xy', scale_units='xy', scale=1, width=0.005)
-            plt.quiver(origin[0], origin[1], A1[0], A1[1], angles='xy', scale_units='xy', scale=1, color='r', width=0.005, label="B1")
-            plt.quiver(origin[0], origin[1], A2[0], A2[1], angles='xy', scale_units='xy', scale=1, color='g', width=0.005, label="B2")
-            
+            plt.quiver(origin[0], origin[1], A1[0], A1[1], angles='xy', scale_units='xy', scale=1, color=(0.1, 0.2, 0.5, 0.8), width=0.005)
+            plt.quiver(origin[0], origin[1], A2[0], A2[1], angles='xy', scale_units='xy', scale=1, color=(0.1, 0.2, 0.5, 0.8), width=0.005)            
 
-        plt.title(f'{self.lattice_type} Lattice')
+        plt.title(f'{self.lattice_type} Lattice with Superlattice Formation')
         plt.axis('equal')
         plt.show()
 
