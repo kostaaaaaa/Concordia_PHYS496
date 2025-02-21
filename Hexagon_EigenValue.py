@@ -39,10 +39,10 @@ for i in range(X.shape[0]):
 # Plotting
 fig = plt.figure(figsize=(10, 8))
 ax = plt.axes(projection='3d')
-ax.plot_surface(X, Y, Z1)
-ax.plot_surface(X, Y, Z2)
-ax.plot_surface(X, Y, Z3)
-ax.plot_surface(X, Y, Z4)
+ax.plot_surface(X, Y, Z1, cmap='coolwarm', alpha=0.8)
+ax.plot_surface(X, Y, Z2, cmap='coolwarm', alpha=0.8)
+ax.plot_surface(X, Y, Z3, cmap='coolwarm', alpha=0.8)
+ax.plot_surface(X, Y, Z4, cmap='coolwarm', alpha=0.8)
 
 ax.set_xlabel('x')
 ax.set_ylabel('y')
