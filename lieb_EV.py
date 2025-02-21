@@ -39,15 +39,15 @@ for i in range(X.shape[0]):
         eigvals = np.real(eigenvalues(X[i, j], Y[i, j]))  
         Z1[i, j], Z2[i, j], Z3[i, j], Z4[i, j], Z5[i, j], Z6[i, j] = np.sort(eigvals)  
 
-# Plotting
 fig = plt.figure(figsize=(10, 8))
 ax = plt.axes(projection='3d')
-ax.plot_surface(X, Y, Z1)
-ax.plot_surface(X, Y, Z2)
-ax.plot_surface(X, Y, Z3)
-ax.plot_surface(X, Y, Z4)
-ax.plot_surface(X, Y, Z5)
-ax.plot_surface(X, Y, Z6)
+
+ax.plot_surface(X, Y, Z1, cmap='coolwarm', alpha=0.8)
+ax.plot_surface(X, Y, Z2, cmap='coolwarm', alpha=0.8)
+ax.plot_surface(X, Y, Z3, cmap='coolwarm', alpha=0.8)
+ax.plot_surface(X, Y, Z4, cmap='coolwarm', alpha=0.8)
+ax.plot_surface(X, Y, Z5, cmap='coolwarm', alpha=0.8)
+ax.plot_surface(X, Y, Z6, cmap='coolwarm', alpha=0.8)
 
 ax.set_xlabel(r'$ak_x$')
 ax.set_ylabel(r'$ak_y$')
