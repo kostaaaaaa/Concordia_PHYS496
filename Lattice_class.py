@@ -53,7 +53,7 @@ class Lattice:
         angle_deg = np.degrees(angle)
 
         if np.isclose(angle_deg, 90) and len(self.basis)==3:
-            return "lieb"
+            return "Lieb"
         elif np.isclose(angle_deg, 90):
             return "Square"
         elif np.isclose(angle_deg, 60) and len(self.basis)==2:
@@ -269,7 +269,7 @@ class Lattice:
             plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
             plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
             plt.scatter(points3[:, 0], points3[:, 1], color=(0.2, 0.5, 0.2, 0.5), s=50)
-        elif self.lattice_type =="lieb":
+        elif self.lattice_type =="Lieb":
             points, points2, points3 = self.generate_lattice_points()
             plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
             plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
@@ -323,7 +323,7 @@ class Lattice:
             plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
             plt.scatter(points3[:, 0], points3[:, 1], color=(0.2, 0.5, 0.2, 0.5), s=50)
 
-        elif self.lattice_type == "lieb":
+        elif self.lattice_type == "Lieb":
 
             points, points2, points3 = self.generate_lattice_points()
             plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
