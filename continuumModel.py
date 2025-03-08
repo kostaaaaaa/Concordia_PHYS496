@@ -7,11 +7,11 @@ from mpl_toolkits.mplot3d import Axes3D
 u = 0.0797eV and u' = 0.0975eV 
 Src = https://arxiv.org/pdf/1805.06819
 
-T1(u,u') = u\sigma_0+u'\sigma_x
+T1(u,u') = u sigma_0+u' sigma_x
 
-T2(u,u') = u\sigma_0+u'(cos(2\pi/3)\sigma_x+sin(2\pi/3)\sigma_y)
+T2(u,u') = u sigma_0+u'(cos(2pi/3)sigma_x+sin(2pi/3)sigma_y)
 
-T3(u,u') = u\sigma_0+u'(cos(2\pi/3)\sigma_x-sin(2\pi/3)\sigma_y)
+T3(u,u') = u sigma_0+u'(cos(2pi/3)sigma_x-sin(2pi/3)sigma_y)
 """
 
 sigma_0 = np.array([[1, 0], [0, 1]])
@@ -26,11 +26,9 @@ T2 = u * sigma_0 + u_p * (np.cos(2 * np.pi / 3) * sigma_x + np.sin(2 * np.pi / 3
 T3 = u * sigma_0 + u_p * (np.cos(2 * np.pi / 3) * sigma_x - np.sin(2 * np.pi / 3) * sigma_y)
 
 K1 = np.array([4 * np.pi / (3 * np.sqrt(3)), 0])
-Gamma = np.array([0, 0])
-M = np.array([np.pi / np.sqrt(3), np.pi / 3])
 K2 = -K1
 
-num_kpoints = 50
+num_kpoints = 25
 kx_vals = np.linspace(-4 * np.pi / 3, 4 * np.pi / 3, num_kpoints)
 ky_vals = np.linspace(-4 * np.pi / 3, 4 * np.pi / 3, num_kpoints)
 kx_grid, ky_grid = np.meshgrid(kx_vals, ky_vals)

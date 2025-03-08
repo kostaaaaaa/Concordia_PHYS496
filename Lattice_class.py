@@ -377,6 +377,8 @@ class Lattice:
 
         plt.title(f'{self.lattice_type} lattice with superlattice formation')
         plt.axis('equal')
+        if save:
+            plt.savefig(f'{self.lattice_type}LatticeWSuperLattice.pdf')
         plt.show()
 
     def plot_reciprocal(self):

@@ -1,15 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sympy import primerange
 
-s_values = list(primerange(1, 31))
-
-n_values = np.arange(1, 71, 1)
+n_values = np.arange(1, 31, 1)  
 
 def compute_phi(n, s):
-    numerator = 3 * n**2 + 3 * n * s + (s**2) / 2
-    denominator = 3 * n**2 + 3 * n * s + s**2
+    numerator = 2*n**2+2*n*s
+    denominator = 2*n**2+2*n*s+s**2
     return np.arccos(numerator / denominator)
+
+s_values = range(1, 6)
 
 plt.figure(figsize=(8, 6))
 
@@ -19,10 +18,8 @@ for s in s_values:
 
 plt.xlabel('n')
 plt.ylabel('Angle φ (degrees)')
-plt.title('Angle φ vs. n for prime s values (Integer n)')
-plt.axhline(y=1.1, color='r', linestyle='-')
+plt.title('Angle φ vs. n for different s values (Integer n)')
 plt.legend()
 plt.grid(True)
 
 plt.show()
-
