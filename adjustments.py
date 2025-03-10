@@ -1,8 +1,10 @@
 from Lattice_class import Lattice
 import numpy as np
 
-v = [[1,0],[0,1]]
-b =[[0,0],[1/2,0],[0,1/2]]
+v = [[1,0],[1/2,np.sqrt(3)/2]]
+b =[[0,0]]
 
-sq = Lattice(1, v, b, 10)
-sq.plot_lattice_superlattice(n=2, save=True)
+tr = Lattice(1, v, b, 10)
+tr.plot_bz_difference(10)
+tr.plot_bz_difference(13.173)
+tr.plot_bz_difference(9.43)

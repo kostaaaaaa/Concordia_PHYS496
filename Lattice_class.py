@@ -737,7 +737,7 @@ class Lattice:
             b1 = factor * np.array([(n + 1), n])
             b2 = factor * np.array([-n, (n + 1)])
         elif self.lattice_type == "Triangle":
-            n = np.round((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
+            n = ((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
             factor = (2 * np.pi) / (3 * (n**2) + 3 * n + 1)
             b1 = factor * np.array([(2 * n + 1), -1 / np.sqrt(3)])
             b2 = factor * np.array([-n, (3 * n + 2) / np.sqrt(3)])
@@ -773,7 +773,7 @@ class Lattice:
         
         elif self.lattice_type=="Triangle":
 
-            bz_edges = self.generate_bzedges(b1,b2)
+            bz_edges = self.generate_bzedges(self.reciprocal_vectors[0],self.reciprocal_vectors[1])
             bz2_edges = self.generate_bzedges(rotb1,rotb2)
             bz3_edges = self.generate_bzedges(b1,b2)
             

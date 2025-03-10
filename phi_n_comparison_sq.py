@@ -19,6 +19,7 @@ for s in s_values:
 plt.xlabel('n')
 plt.ylabel('Angle φ (degrees)')
 plt.title('Angle φ vs. n for different s values (Integer n)')
+plt.axhline(y=1.1, color='r', linestyle = '-')
 plt.legend()
 plt.grid(True)
 
