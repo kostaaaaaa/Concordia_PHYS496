@@ -786,8 +786,8 @@ class Lattice:
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="rotated bz" if i == 0 else "")
 
             
-            for i in range(-grid_size, grid_size + 1):
-                for j in range(-grid_size, grid_size + 1):
+            for i in range(grid_size-int((s+1)/2), grid_size + int((s+1)/2)):
+                for j in range(grid_size-int((s+1)/2), grid_size + int((s+1)/2)):
                     translation = i * b1 + j * b2
                     for k in range(len(bz3_edges)):
                         start = bz3_edges[k] + translation
