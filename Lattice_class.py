@@ -708,7 +708,7 @@ class Lattice:
         else:
             plt.show()
 
-    def plot_bz_difference(self, degrees, save=False):
+    def plot_bz_difference(self, degrees, s=1, save=False):
         """ plot to showcase the difference in brillouin zone for the twisted system """
         b1 = self.reciprocal_vectors[0]
         b2 = self.reciprocal_vectors[1]
@@ -737,7 +737,7 @@ class Lattice:
             b1 = factor * np.array([(n + 1), n])
             b2 = factor * np.array([-n, (n + 1)])
         elif self.lattice_type == "Triangle":
-            n = ((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
+            n = s*abs((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
             factor = (2 * np.pi) / (3 * (n**2) + 3 * n + 1)
             b1 = factor * np.array([(2 * n + 1), -1 / np.sqrt(3)])
             b2 = factor * np.array([-n, (3 * n + 2) / np.sqrt(3)])
@@ -748,7 +748,7 @@ class Lattice:
 
         if self.lattice_type =="Square":
             
-            bz_edges = self.generate_bzedges(b1,b2)
+            bz_edges = self.generate_bzedges(self.reciprocal_vectors[0],self.reciprocal_vectors[1])
             bz2_edges = self.generate_bzedges(rotb1,rotb2)
             bz3_edges = self.generate_bzedges(b1,b2)
                     
@@ -763,13 +763,11 @@ class Lattice:
                         end = bz2_edges[(i + 1) % 4]  # connect back to the first point to form the Square
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="rotated bz" if i == 0 else "")
 
-            for i in range(-grid_size, grid_size + 1):
-                for j in range(-grid_size, grid_size + 1):
-                    translation = i * b1 + j * b2
-                    for k in range(len(bz3_edges)):
-                        start = bz3_edges[k] + translation
-                        end = bz3_edges[(k + 1) % len(bz3_edges)] + translation
-                        ax.plot([start[0], end[0]], [start[1], end[1]], '-', color="k", linewidth=0.25 , label="superlattice bz" if i == -grid_size and j == -grid_size and k == 0 else "")
+            translation = n*b1
+            for k in range(len(bz3_edges)):
+                start = bz3_edges[k] + translation
+                end = bz3_edges[(k + 1) % len(bz3_edges)] + translation
+                ax.plot([start[0], end[0]], [start[1], end[1]], '-', color="k", linewidth=0.25 , label="superlattice bz" if i == -grid_size and j == -grid_size and k == 0 else "")
         
         elif self.lattice_type=="Triangle":
 
@@ -787,6 +785,7 @@ class Lattice:
                         end = bz2_edges[(i + 1) % len(bz2_edges)]  # connect back to the first point to form the Square
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="rotated bz" if i == 0 else "")
 
+            
             for i in range(-grid_size, grid_size + 1):
                 for j in range(-grid_size, grid_size + 1):
                     translation = i * b1 + j * b2

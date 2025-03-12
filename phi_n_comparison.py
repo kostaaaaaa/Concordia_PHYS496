@@ -2,9 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sympy import primerange
 
-s_values = np.arange(1,9,1)
+s_values = np.arange(1,6,1)
 
-n_values = np.arange(-90, 71, 1)
+n_values = np.arange(1, 71, 1)
 
 def compute_phi(n, s):
     numerator = 3 * n**2 + 3 * n * s + (s**2) / 2
