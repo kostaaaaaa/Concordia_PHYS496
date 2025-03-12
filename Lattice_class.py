@@ -738,9 +738,9 @@ class Lattice:
             b2 = factor * np.array([-n, (n + 1)])
         elif self.lattice_type == "Triangle":
             n = s*abs((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
-            factor = (2 * np.pi) / (3 * (n**2) + 3 * n + 1)
-            b1 = factor * np.array([(2 * n + 1), -1 / np.sqrt(3)])
-            b2 = factor * np.array([-n, (3 * n + 2) / np.sqrt(3)])
+            factor = (2 * np.pi) / (3 * (n**2) + 3 * n * s + s**2)
+            b1 = factor * np.array([(2 * n + s), -s / np.sqrt(3)])
+            b2 = factor * np.array([-n, (3 * n + 2*s) / np.sqrt(3)])
         else:
             raise valueerror("twist vectors not defined for this lattice type.")
         
@@ -786,8 +786,8 @@ class Lattice:
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="rotated bz" if i == 0 else "")
 
             
-            for i in range(grid_size-int((s+1)/2), grid_size + int((s+1)/2)):
-                for j in range(grid_size-int((s+1)/2), grid_size + int((s+1)/2)):
+            for i in range(grid_size, grid_size + s):
+                for j in range(grid_size, grid_size + s):
                     translation = i * b1 + j * b2
                     for k in range(len(bz3_edges)):
                         start = bz3_edges[k] + translation
