@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from sympy import primerange
 
 s_values = list(primerange(1, 35))
+s_values.insert(0,1)
 n_values = np.arange(1, 920, 10)
 
 def compute_phi(n, s):
