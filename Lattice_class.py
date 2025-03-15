@@ -732,10 +732,10 @@ class Lattice:
         ax.set_title(f'{self.lattice_type} brillouin zone pattern')
 
         if self.lattice_type == "Square":
-            n = np.round(-cos_phi / (cos_phi - sin_phi - 1))
-            factor = 2 * np.pi / (2 * n**2 + 2 * n + 1)
-            b1 = factor * np.array([(n + 1), n])
-            b2 = factor * np.array([-n, (n + 1)])
+            n = (-(s*cos_phi) / (cos_phi - sin_phi - 1))
+            factor = 2 * np.pi / (2 * n**2 + 2 * n * s+ s**2)
+            b1 = factor * np.array([(n + s), n])
+            b2 = factor * np.array([-n, (n + s)])
         elif self.lattice_type == "Triangle":
             n = s*abs((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
             factor = (2 * np.pi) / (3 * (n**2) + 3 * n * s + s**2)
@@ -744,7 +744,7 @@ class Lattice:
         else:
             raise valueerror("twist vectors not defined for this lattice type.")
         
-        grid_size = int(n+1)
+        grid_size = int(n+s)
 
         if self.lattice_type =="Square":
             
@@ -763,11 +763,13 @@ class Lattice:
                         end = bz2_edges[(i + 1) % 4]  # connect back to the first point to form the Square
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="rotated bz" if i == 0 else "")
 
-            translation = n*b1
-            for k in range(len(bz3_edges)):
-                start = bz3_edges[k] + translation
-                end = bz3_edges[(k + 1) % len(bz3_edges)] + translation
-                ax.plot([start[0], end[0]], [start[1], end[1]], '-', color="k", linewidth=0.25 , label="superlattice bz" if i == -grid_size and j == -grid_size and k == 0 else "")
+            for i in range(-grid_size, grid_size):
+                for j in range(-grid_size, grid_size):
+                    translation = i * b1 + j * b2
+                    for k in range(len(bz3_edges)):
+                        start = bz3_edges[k] + translation
+                        end = bz3_edges[(k + 1) % len(bz3_edges)] + translation
+                        ax.plot([start[0], end[0]], [start[1], end[1]], '-', color="k", linewidth=0.25 , label="superlattice bz" if i == -grid_size and j == -grid_size and k == 0 else "")
         
         elif self.lattice_type=="Triangle":
 
