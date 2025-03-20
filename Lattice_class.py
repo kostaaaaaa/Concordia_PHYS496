@@ -85,12 +85,12 @@ class Lattice:
             ]
         else:
             bz_edges = [
-                    (1/3)*(2*v1+v2),  # vertex 1
-                    (1/3)*(v1+2*v2),  # vertex 2
-                    (1/3)*(-v1+v2), # vertex 3
-                    (1/3)*(-2*v1-v2), # vertex 4
-                    (1/3)*(-v1-2*v2), # vertex 5
-                    (1/3)*(v1-v2)   # vertex 6
+                    (1/3)*(2*v1+v2),  
+                    (1/3)*(v1+2*v2),  
+                    (1/3)*(-v1+v2), 
+                    (1/3)*(-2*v1-v2), 
+                    (1/3)*(-v1-2*v2), 
+                    (1/3)*(v1-v2)   
             ]
         
         return bz_edges
@@ -178,7 +178,6 @@ class Lattice:
         cos_phi = np.cos(phi)
         sin_phi = np.sin(phi)
         
-        # determine n based on lattice type
         if self.lattice_type == "Square":
             n = np.round(-cos_phi / (cos_phi - sin_phi - 1))
             factor = 2 * np.pi / (2 * n**2 + 2 * n + 1)
@@ -192,7 +191,6 @@ class Lattice:
         else:
             raise valueerror("superlattice reciprocal not defined for this lattice type.")
         
-        # generate points
         points = []
         for i in range(self.x_range[0], self.x_range[1]):
             for j in range(self.y_range[0], self.y_range[1]):
@@ -222,7 +220,6 @@ class Lattice:
         cos_phi = np.cos(phi)
         sin_phi = np.sin(phi)
         
-        # determine n based on lattice type and calculate b1, b2
         if self.lattice_type == "Square":
             n = np.round(-cos_phi / (cos_phi - sin_phi - 1))
             factor = 2 * np.pi / (2 * n**2 + 2 * n + 1)
@@ -236,19 +233,15 @@ class Lattice:
         else:
             raise valueerror("superlattice reciprocal not defined for this lattice type.")
         
-        # generate reciprocal points
         points = self.generate_superlattice_reciprocal_points(degrees)
 
-        # plot the points
         plt.figure(figsize=(8, 8))
         plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50, label="reciprocal points")
 
-        # add vectors b1 and b2 using quiver
         origin = np.array([0, 0])
         plt.quiver(origin[0], origin[1], b1[0], b1[1], angles='xy', scale_units='xy', scale=1, color='r', width=0.005, label="b1")
         plt.quiver(origin[0], origin[1], b2[0], b2[1], angles='xy', scale_units='xy', scale=1, color='g', width=0.005, label="b2")
 
-        # configure the plot
         plt.title(f'{self.lattice_type} superlattice reciprocal with vectors (rotation: {degrees}°)')
         plt.axis('equal')
         plt.legend()
@@ -399,7 +392,7 @@ class Lattice:
     
     def plot_bilayer(self, degrees, save=False):
         """ plots 3d bilayer Hexagon lattices (atoms a1 and b2 overlap)"""
-        a = 0.5 #vertical distance between layers
+        a = 0.5 
         fig = plt.figure(figsize=(10,10))
         ax = fig.add_subplot(111, projection="3d")
         if self.lattice_type == "Hexagon":
@@ -534,7 +527,7 @@ class Lattice:
         a2 = self.vectors[1]
 
         origin = np.array([0, 0])
-        for n in range(0, self.num_sites):  # Circle range from 0 to num_sites
+        for n in range(0, self.num_sites):  
             radius_vector = n * (np.array(a1) + np.array(a2)) + np.array(a1)
             radius = np.linalg.norm(radius_vector)
             Circle = plt.Circle(origin, radius, color="r", fill=False, alpha=0.3, lw=1.5)
@@ -543,7 +536,7 @@ class Lattice:
         max_extent = max(np.linalg.norm(n * (a1 + a2) + a1) for n in range(0, self.num_sites + 1)) + self.lattice_distance
         ax.set_xlim(-max_extent, max_extent)
         ax.set_ylim(-max_extent, max_extent)
-        ax.set_aspect('equal', adjustable='datalim')  # ensure equal aspect ratio
+        ax.set_aspect('equal', adjustable='datalim')  
 
         plt.title(f'{self.lattice_type} lattice with twist Circles')
         plt.legend()
@@ -575,7 +568,7 @@ class Lattice:
             raise valueerror("twist vectors not defined for this lattice type.")
 
         points = self.generate_lattice_points()
-        if isinstance(points, tuple):  # handle cases with basis points
+        if isinstance(points, tuple):  
             points, points2 = points
         else:
             points2 = None
@@ -594,7 +587,7 @@ class Lattice:
         plt.quiver(origin[0], origin[1], b1[0], b1[1], angles='xy', scale_units='xy', scale=1, color='r', width=0.005, label="b1")
         plt.quiver(origin[0], origin[1], b2[0], b2[1], angles='xy', scale_units='xy', scale=1, color='g', width=0.005, label="b2")
 
-        for i in range(self.num_sites):  # Circle range from 0 to num_sites
+        for i in range(self.num_sites):  
             radius_vector = i * (np.array(a1) + np.array(a2)) + np.array(a1)
             radius = np.linalg.norm(radius_vector)
             Circle = plt.Circle(origin, radius, color="r", fill=False, alpha=0.3, lw=1.5)
@@ -603,7 +596,7 @@ class Lattice:
         max_extent = max(np.linalg.norm(i * (b1 + b2)) for i in range(self.num_sites)) + self.lattice_distance
         plt.xlim(-max_extent, max_extent)
         plt.ylim(-max_extent, max_extent)
-        plt.gca().set_aspect('equal', adjustable='datalim')  # ensure equal aspect ratio
+        plt.gca().set_aspect('equal', adjustable='datalim')  
 
         plt.title(f'{self.lattice_type} lattice with twist vectors (rotation: {degrees}°)')
         plt.legend()
@@ -648,12 +641,12 @@ class Lattice:
                 
                 for i in range(4):
                     start = bz_edges[i]
-                    end = bz_edges[(i + 1) % 4]  # connect back to the first point to form the Square
+                    end = bz_edges[(i + 1) % 4]  
                     ax.plot([start[0], end[0]], [start[1], end[1]], '-', color="orange", label="bz edge" if i == 0 else "")
 
                 for i in range(4):
                     start = bz2_edges[i]
-                    end = bz2_edges[(i + 1) % 4]  # connect back to the first point to form the Square
+                    end = bz2_edges[(i + 1) % 4]  
                     ax.plot([start[0], end[0]], [start[1], end[1]], '-', color="orange", label="bz2 edge" if i == 0 else "")
 
             elif self.lattice_type == "Triangle":
@@ -667,12 +660,12 @@ class Lattice:
                 
                 for i in range(len(bz_edges)):
                     start = bz_edges[i]
-                    end = bz_edges[(i + 1) % len(bz_edges)]  # connect back to the first point
+                    end = bz_edges[(i + 1) % len(bz_edges)]  
                     ax.plot([start[0], end[0]], [start[1], end[1]], '-', color="orange", label="bz edge" if i == 0 else "")
 
                 for i in range(len(bz2_edges)):
                     start = bz2_edges[i]
-                    end = bz2_edges[(i + 1) % len(bz2_edges)]  # connect back to the first point
+                    end = bz2_edges[(i + 1) % len(bz2_edges)]  
                     ax.plot([start[0], end[0]], [start[1], end[1]], '-', color="orange", label="bz2 edge" if i == 0 else "")
 
                 
@@ -744,7 +737,7 @@ class Lattice:
         else:
             raise valueerror("twist vectors not defined for this lattice type.")
         
-        grid_size = int(n+s)
+        grid_size = int(n+1)
 
         if self.lattice_type =="Square":
             
@@ -752,19 +745,18 @@ class Lattice:
             bz2_edges = self.generate_bzedges(rotb1,rotb2)
             bz3_edges = self.generate_bzedges(b1,b2)
                     
-                    # plot the Square bz
             for i in range(4):
                         start = bz_edges[i]
-                        end = bz_edges[(i + 1) % 4]  # connect back to the first point to form the Square
+                        end = bz_edges[(i + 1) % 4]  
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.2, 0.5, 0.8), label="original bz" if i == 0 else "")
 
             for i in range(4):
                         start = bz2_edges[i]
-                        end = bz2_edges[(i + 1) % 4]  # connect back to the first point to form the Square
+                        end = bz2_edges[(i + 1) % 4]  
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="rotated bz" if i == 0 else "")
 
-            for i in range(-grid_size, grid_size):
-                for j in range(-grid_size, grid_size):
+            for i in range(grid_size-2*s, grid_size+2*s):
+                for j in range(-int(grid_size/n), -int(grid_size/n)+5):
                     translation = i * b1 + j * b2
                     for k in range(len(bz3_edges)):
                         start = bz3_edges[k] + translation
@@ -779,17 +771,17 @@ class Lattice:
             
             for i in range(len(bz_edges)):
                         start = bz_edges[i]
-                        end = bz_edges[(i + 1) % len(bz_edges)]  # connect back to the first point to form the Square
+                        end = bz_edges[(i + 1) % len(bz_edges)]  
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.2, 0.5, 0.8), label="original bz" if i == 0 else "")
 
             for i in range(len(bz2_edges)):
                         start = bz2_edges[i]
-                        end = bz2_edges[(i + 1) % len(bz2_edges)]  # connect back to the first point to form the Square
+                        end = bz2_edges[(i + 1) % len(bz2_edges)]  
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="rotated bz" if i == 0 else "")
 
             
-            for i in range(grid_size, grid_size + s):
-                for j in range(grid_size, grid_size + s):
+            for i in range(grid_size, grid_size+s):
+                for j in range(grid_size, grid_size+s):
                     translation = i * b1 + j * b2
                     for k in range(len(bz3_edges)):
                         start = bz3_edges[k] + translation
@@ -822,10 +814,10 @@ class Lattice:
             ax.view_init(90,90,180)
 
             def update(frame):
-                angle = frame  # current rotation angle in degrees
+                angle = frame  
                 p22 = self.generate_rotated_points(angle)
                 top_layer_plot.set_data(p22[:, 0], p22[:, 1])
-                top_layer_plot.set_3d_properties(a)  # set constant z for top layer
+                top_layer_plot.set_3d_properties(a)  
                 ax.set_title(f"rotation angle: {angle:.1f}°")
                 return top_layer_plot,
 

@@ -22,8 +22,8 @@ def eigenvalues(x, y):
     H_matrix = H(x, y,)
     return eig(H_matrix)[0] 
 
-x_vals = np.linspace(-4, 4, 100)
-y_vals = np.linspace(-4, 4, 100)
+x_vals = np.linspace(-4, 4, 50)
+y_vals = np.linspace(-4, 4, 50)
 X, Y = np.meshgrid(x_vals, y_vals)
 
 Z1 = np.zeros_like(X, dtype=float)
