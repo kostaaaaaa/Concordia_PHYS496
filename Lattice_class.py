@@ -205,7 +205,7 @@ class Lattice:
 
         plt.figure(figsize=(8, 8))
         plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
-        plt.title(f'{self.lattice_type} superlattice reciprocal (rotation: {degrees}°)')
+        plt.title(f'{self.lattice_type} Superlattice Reciprocal (Rotation: {degrees}°)')
         plt.axis('equal')
         if save:
             plt.savefig(f'{self.lattice_type}_superlattice_reciprocal_{degrees}.pdf')
@@ -242,7 +242,7 @@ class Lattice:
         plt.quiver(origin[0], origin[1], b1[0], b1[1], angles='xy', scale_units='xy', scale=1, color='r', width=0.005, label="b1")
         plt.quiver(origin[0], origin[1], b2[0], b2[1], angles='xy', scale_units='xy', scale=1, color='g', width=0.005, label="b2")
 
-        plt.title(f'{self.lattice_type} superlattice reciprocal with vectors (rotation: {degrees}°)')
+        plt.title(f'{self.lattice_type} Superlattice Reciprocal with Vectors (Rotation: {degrees}°)')
         plt.axis('equal')
         plt.legend()
         if save:
@@ -271,7 +271,7 @@ class Lattice:
             points = self.generate_lattice_points()
             plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
 
-        plt.title(f'{self.lattice_type} lattice')
+        plt.title(f'{self.lattice_type} Lattice')
         plt.axis('equal')
         plt.xlabel('x')
         plt.ylabel('y')
@@ -368,7 +368,7 @@ class Lattice:
             plt.quiver(origin[0], origin[1], a1[0], a1[1], angles='xy', scale_units='xy', scale=1, color=(0.1, 0.2, 0.5, 0.8), width=0.005)
             plt.quiver(origin[0], origin[1], a2[0], a2[1], angles='xy', scale_units='xy', scale=1, color=(0.1, 0.2, 0.5, 0.8), width=0.005)            
 
-        plt.title(f'{self.lattice_type} lattice with superlattice formation')
+        plt.title(f'{self.lattice_type} Lattice with Superlattice Formation')
         plt.axis('equal')
         if save:
             plt.savefig(f'{self.lattice_type}LatticeWSuperLattice.pdf')
@@ -386,7 +386,7 @@ class Lattice:
 
         if len(self.basis) > 1:
             plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
-        plt.title(f'{self.lattice_type} reciprocal lattice')
+        plt.title(f'{self.lattice_type} Reciprocal Lattice')
         plt.axis('equal')
         plt.show()
     
@@ -465,7 +465,7 @@ class Lattice:
             ax.scatter(p22[:, 0]-lattice_shift_x, p22[:, 1]-lattice_shift_y,a, color=layer_2, s=10, label="b2")
 
         ax.set_zlim(-a, a*2)
-        ax.set_title(f"3d bilayer {self.lattice_type}")
+        ax.set_title(f"3D Bilayer {self.lattice_type}")
         ax.axis('equal')
         ax.legend()
         ax.view_init(90,90,180)
@@ -529,7 +529,7 @@ class Lattice:
             
 
         ax.set_zlim(-a, a*2)
-        ax.set_title("3d bilayer graphene")
+        ax.set_title("3D Bilayer Graphene")
         ax.axis('equal')
         ax.legend()
         ax.view_init(90,90,180)
@@ -574,7 +574,7 @@ class Lattice:
         ax.set_ylim(-max_extent, max_extent)
         ax.set_aspect('equal', adjustable='datalim')  
 
-        plt.title(f'{self.lattice_type} lattice with twist Circles')
+        plt.title(f'{self.lattice_type} Lattice with Twist Circles')
         plt.legend()
         plt.axis('equal')
         if save:
@@ -634,7 +634,7 @@ class Lattice:
         plt.ylim(-max_extent, max_extent)
         plt.gca().set_aspect('equal', adjustable='datalim')  
 
-        plt.title(f'{self.lattice_type} lattice with twist vectors (rotation: {degrees}°)')
+        plt.title(f'{self.lattice_type} Lattice with Twist Vectors (Rotation: {degrees}°)')
         plt.legend()
         plt.axis('equal')
         if save:
@@ -647,7 +647,7 @@ class Lattice:
         as the twist angle spans from 0 to 90 degrees (phi: 0 to pi/2).
         """
         fig, ax = plt.subplots(figsize=(8, 8))
-        ax.set_title(f'{self.lattice_type} superlattice reciprocal comparison')
+        ax.set_title(f'{self.lattice_type} Superlattice Reciprocal Comparison')
 
         points_scatter = ax.scatter([], [], color=(0.1, 0.2, 0.5, 0.5), s=15, label="superlattice points")
         quiver_a1 = ax.quiver(0, 0, 0, 0, angles='xy', scale_units='xy', scale=1, width=0.005, label="original reciprocal b1")
@@ -722,7 +722,7 @@ class Lattice:
             quiver_b1.set_uvc(b1[0], b1[1])
             quiver_b2.set_uvc(b2[0], b2[1])
             
-            ax.set_title(f'{self.lattice_type} superlattice reciprocal comparison (phi = {np.degrees(phi):.2f}°)')
+            ax.set_title(f'{self.lattice_type} Superlattice Reciprocal Comparison (Phi = {np.degrees(phi):.2f}°)')
             return points_scatter, quiver_b1, quiver_b2
 
         max_extent = self.lattice_distance * self.num_sites
@@ -758,7 +758,7 @@ class Lattice:
         sin_phi = np.sin(angle)
 
         fig, ax = plt.subplots(figsize=(10, 10))
-        ax.set_title(f'{self.lattice_type} brillouin zone pattern')
+        ax.set_title(f'{self.lattice_type} Brillouin Zone Pattern')
 
         if self.lattice_type == "Square":
             n = (-(s*cos_phi) / (cos_phi - sin_phi - 1))
@@ -849,7 +849,7 @@ class Lattice:
         sin_phi = np.sin(angle)
 
         fig, ax = plt.subplots(figsize=(10, 10))
-        ax.set_title(f'{self.lattice_type} brillouin zone pattern')
+        ax.set_title(f'{self.lattice_type} Brillouin Zone Pattern')
 
         if self.lattice_type == "Square":
             n = (-(s*cos_phi) / (cos_phi - sin_phi - 1))
@@ -948,7 +948,7 @@ class Lattice:
             top_layer_plot, = ax.plot([], [], [], 'o', color=(0.1, 0.5, 0.2, 0.5), markersize=5, label="a2 (top layer)")
             ax.axis('equal')
             ax.set_zlim(-a, a * 2)
-            ax.set_title(f"{self.lattice_type} bilayer rotation animation")
+            ax.set_title(f"{self.lattice_type} Bilayer Rotation Animation")
             ax.legend()
             ax.view_init(90,90,180)
 
@@ -957,7 +957,7 @@ class Lattice:
                 p22 = self.generate_rotated_points(angle)
                 top_layer_plot.set_data(p22[:, 0], p22[:, 1])
                 top_layer_plot.set_3d_properties(a)  
-                ax.set_title(f"rotation angle: {angle:.1f}°")
+                ax.set_title(f"Rotation angle: {angle:.1f}°")
                 return top_layer_plot,
 
             anim = FuncAnimation(fig, update, frames=np.linspace(0, max_angle, 100), blit=True)
