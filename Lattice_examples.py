@@ -4,7 +4,7 @@ import numpy as np
 
 """Initialized Parameters"""
 lattice_distance = 1
-lattice_sites = 5
+lattice_sites = 20
 lattice_degrees = 5
 save_state = True
 
@@ -31,27 +31,4 @@ lattice_kagome = Lattice(lattice_distance, vectors_kagome, basis_kagome, lattice
 lattice_lieb = Lattice(lattice_distance, vectors_lieb, basis_lieb, lattice_sites)
 
 """Plotting"""
-
-"""
-lattice_triangle.plot_bilayer(lattice_degrees, save=save_state)
-lattice_triangle.plot_bilayer_align(lattice_degrees, save=save_state)
-lattice_triangle.plot_lattice_with_twist_Circles(save=save_state)
-
-lattice_square.plot_bilayer(lattice_degrees, save=save_state)
-lattice_square.plot_bilayer_align(lattice_degrees, save=save_state)
-lattice_square.plot_lattice_with_twist_Circles(save=save_state)
-
-lattice_hexagon.plot_bilayer(lattice_degrees, save=save_state)
-lattice_hexagon.plot_bilayer_align(lattice_degrees, save=save_state)
-
-"""
-lattice_hexagon = Lattice(lattice_distance, vectors_hexagon, basis_hexagon, 5*lattice_sites)
-lattice_hexagon.plot_bilayer(degrees=5)
-lattice_hexagon.plot_bilayer_align(degrees=5)
-lattice_kagome = Lattice(lattice_distance, vectors_kagome, basis_kagome, 4*lattice_sites)
-lattice_kagome.plot_bilayer(degrees=5)
-lattice_kagome.plot_bilayer_align(degrees=5)
-lattice_lieb = Lattice(lattice_distance, vectors_lieb, basis_lieb, 6*lattice_sites)
-lattice_lieb.plot_bilayer(degrees=15)
-lattice_lieb.plot_bilayer_align(degrees=5)
-
+lattice_lieb.plot_bilayer_align_comparison(lattice_degrees)

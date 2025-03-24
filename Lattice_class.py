@@ -373,6 +373,246 @@ class Lattice:
         if save:
             plt.savefig(f'{self.lattice_type}LatticeWSuperLattice.pdf')
         plt.show()
+    
+
+    def plot_bilayer_2D(self, degrees, save=False):
+        """ Plots 2D Bilayer of a given lattice, top-down view."""
+        layer_1 = (0.1, 0.1, 0.6, 0.5)
+        layer_2 = (0.6, 0.1, 0.1, 0.5)
+    
+        fig, ax = plt.subplots(figsize=(10, 10))
+    
+        if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
+            shift_x = self.lattice_distance * 0.5
+            shift_y = self.lattice_distance * np.sqrt(3) / 4
+        else:
+            shift_x = self.lattice_distance
+            shift_y = self.lattice_distance
+    
+        if self.lattice_type == "Hexagon":
+            p11, p12 = self.generate_lattice_points()
+            p21, p22 = self.generate_rotated_points(degrees)
+        
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="Layer 1")
+            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5)
+            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="Layer 2")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5)
+    
+        elif self.lattice_type == "Kagome":
+            p11, p12, p13 = self.generate_lattice_points()
+            p21, p22, p23 = self.generate_rotated_points(degrees)
+        
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="Layer 1")
+            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5)
+            ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=5)
+        
+            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="Layer 2")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5)
+            ax.scatter(p23[:, 0] - shift_x, p23[:, 1] - shift_y, color=layer_2, s=5)
+    
+        elif self.lattice_type == "Triangle":
+            p11 = self.generate_lattice_points()
+            p22 = self.generate_rotated_points(degrees)
+        
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="Layer 1")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5, label="Layer 2")
+    
+        elif self.lattice_type == "Lieb":
+            p11, p12, p13 = self.generate_lattice_points()
+            p21, p22, p23 = self.generate_rotated_points(degrees)
+        
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="Layer 1")
+            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5)
+            ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=5)
+        
+            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="Layer 2")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5)
+            ax.scatter(p23[:, 0] - shift_x, p23[:, 1] - shift_y, color=layer_2, s=5)
+    
+        else:
+            p11 = self.generate_lattice_points()
+            p22 = self.generate_rotated_points(degrees)
+        
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=10, label="b2")
+    
+        ax.set_title(f"2D Bilayer {self.lattice_type}")
+        ax.axis("equal")
+        ax.legend()
+    
+        if save:
+            plt.savefig(f"{self.lattice_type}_bilayer_{degrees}.pdf")
+    
+        plt.show()
+
+    def plot_bilayer_comparison(self, degrees, save=False):
+        """ Plots 2D Bilayer of a given lattice, top-down view, showing both CW and CCW rotations."""
+        layer_1 = (0.1, 0.1, 0.6, 0.5)
+        layer_2 = (0.6, 0.1, 0.1, 0.5)
+        
+        fig, axes = plt.subplots(1, 2, figsize=(20, 10))
+        rotations = [degrees, -degrees]
+        titles = [f"{self.lattice_type} CW ({degrees}°)", f"{self.lattice_type} CCW ({-degrees}°)"]
+        
+        if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
+            n = np.abs((1 - 2 * np.cos(np.radians(degrees))) / (3 * (np.cos(np.radians(degrees)) - 1) - np.sqrt(3) * np.sin(np.radians(degrees))))
+        else:
+            n = np.abs(np.cos(np.radians(degrees)) / (np.cos(np.radians(degrees)) - np.sin(np.radians(degrees)) - 1))
+        
+        u1 = n * (self.vectors[0] + self.vectors[1]) + self.vectors[0]
+        u2 = n * (self.vectors[0] + self.vectors[1]) + self.vectors[1]
+        
+        for ax, deg, title in zip(axes, rotations, titles):
+            if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
+                shift_x = self.lattice_distance * 0.5
+                shift_y = self.lattice_distance * np.sqrt(3) / 4
+            else:
+                shift_x = self.lattice_distance
+                shift_y = self.lattice_distance
+            
+            if self.lattice_type == "Hexagon":
+                p11, p12 = self.generate_lattice_points()
+                p21, p22 = self.generate_rotated_points(deg)
+                
+                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
+                ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5, label="b1")
+                ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="a2")
+                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5, label="b2")
+            
+            elif self.lattice_type == "Kagome":
+                p11, p12, p13 = self.generate_lattice_points()
+                p21, p22, p23 = self.generate_rotated_points(deg)
+                
+                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
+                ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5, label="b1")
+                ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=5, label="c1")
+                
+                ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="a2")
+                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5, label="b2")
+                ax.scatter(p23[:, 0] - shift_x, p23[:, 1] - shift_y, color=layer_2, s=5, label="c2")
+            
+            elif self.lattice_type == "Triangle":
+                p11 = self.generate_lattice_points()
+                p22 = self.generate_rotated_points(deg)
+                
+                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
+                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5, label="b2")
+            
+            elif self.lattice_type == "Lieb":
+                p11, p12, p13 = self.generate_lattice_points()
+                p21, p22, p23 = self.generate_rotated_points(deg)
+                
+                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="Layer 1")
+                ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5)
+                ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=5)
+                
+                ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="Layer 2")
+                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5)
+                ax.scatter(p23[:, 0] - shift_x, p23[:, 1] - shift_y, color=layer_2, s=5)
+            
+            else:
+                p11 = self.generate_lattice_points()
+                p22 = self.generate_rotated_points(deg)
+                
+                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
+                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=10, label="b2")
+            
+            ax.quiver(0, 0, u1[0], u1[1], color='r', angles='xy', scale_units='xy', scale=1, label='u1')
+            ax.quiver(0, 0, u2[0], u2[1], color='g', angles='xy', scale_units='xy', scale=1, label='u2')
+            
+            ax.set_title(title)
+            ax.axis("equal")
+            ax.legend()
+        
+        if save:
+            plt.savefig(f"{self.lattice_type}_bilayer_CW_CCW_{degrees}.pdf")
+        
+        plt.show()    
+
+    
+    def plot_bilayer_align_comparison(self, degrees, save=False):
+        """ Plots 2D Bilayer of a given lattice, top-down view, showing both CW and CCW rotations."""
+        layer_1 = (0.1, 0.1, 0.6, 0.5)
+        layer_2 = (0.6, 0.1, 0.1, 0.5)
+        
+        fig, axes = plt.subplots(1, 2, figsize=(20, 10))
+        rotations = [degrees, -degrees]
+        titles = [f"{self.lattice_type} CW ({degrees}°)", f"{self.lattice_type} CCW ({-degrees}°)"]
+        
+        if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
+            n = np.abs((1 - 2 * np.cos(np.radians(degrees))) / (3 * (np.cos(np.radians(degrees)) - 1) - np.sqrt(3) * np.sin(np.radians(degrees))))
+        else:
+            n = np.abs(np.cos(np.radians(degrees)) / (np.cos(np.radians(degrees)) - np.sin(np.radians(degrees)) - 1))
+        
+        u1 = n * (self.vectors[0] + self.vectors[1]) + self.vectors[0]
+        u2 = n * (self.vectors[0] + self.vectors[1]) + self.vectors[1]
+        
+        for ax, deg, title in zip(axes, rotations, titles):
+            if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
+                shift_x = 0
+                shift_y = 0
+            else:
+                shift_x = 0
+                shift_y = 0
+            
+            if self.lattice_type == "Hexagon":
+                p11, p12 = self.generate_lattice_points()
+                p21, p22 = self.generate_rotated_points(deg)
+                
+                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
+                ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5, label="b1")
+                ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="a2")
+                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5, label="b2")
+            
+            elif self.lattice_type == "Kagome":
+                p11, p12, p13 = self.generate_lattice_points()
+                p21, p22, p23 = self.generate_rotated_points(deg)
+                
+                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
+                ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5, label="b1")
+                ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=5, label="c1")
+                
+                ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="a2")
+                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5, label="b2")
+                ax.scatter(p23[:, 0] - shift_x, p23[:, 1] - shift_y, color=layer_2, s=5, label="c2")
+            
+            elif self.lattice_type == "Triangle":
+                p11 = self.generate_lattice_points()
+                p22 = self.generate_rotated_points(deg)
+                
+                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
+                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5, label="b2")
+            
+            elif self.lattice_type == "Lieb":
+                p11, p12, p13 = self.generate_lattice_points()
+                p21, p22, p23 = self.generate_rotated_points(deg)
+                
+                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="Layer 1")
+                ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5)
+                ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=5)
+                
+                ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="Layer 2")
+                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5)
+                ax.scatter(p23[:, 0] - shift_x, p23[:, 1] - shift_y, color=layer_2, s=5)
+            
+            else:
+                p11 = self.generate_lattice_points()
+                p22 = self.generate_rotated_points(deg)
+                
+                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
+                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=10, label="b2")
+            
+            ax.quiver(0, 0, u1[0], u1[1], color='r', angles='xy', scale_units='xy', scale=1, label='u1')
+            ax.quiver(0, 0, u2[0], u2[1], color='g', angles='xy', scale_units='xy', scale=1, label='u2')
+            
+            ax.set_title(title)
+            ax.axis("equal")
+            ax.legend()
+        
+        if save:
+            plt.savefig(f"{self.lattice_type}_bilayer_CW_CCW_{degrees}.pdf")
+        
+        plt.show()    
 
     def plot_reciprocal(self):
         """ plots reciprocal lattice strucutre """
@@ -391,7 +631,7 @@ class Lattice:
         plt.show()
     
     def plot_bilayer(self, degrees, save=False):
-        """ plots 3d bilayer Hexagon lattices (atoms a1 and b2 overlap)"""
+        """ Plots 3D Bilayer of a given lattice, not aligned. The Second layer is shifted"""
         a = 0.5 
         layer_1 = (0.1,0.1,0.6,0.5)
         layer_2 = (0.6,0.1,0.1,0.5)
