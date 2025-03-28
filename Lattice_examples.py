@@ -31,4 +31,8 @@ lattice_kagome = Lattice(lattice_distance, vectors_kagome, basis_kagome, lattice
 lattice_lieb = Lattice(lattice_distance, vectors_lieb, basis_lieb, lattice_sites)
 
 """Plotting"""
-lattice_lieb.plot_bilayer_align_comparison(lattice_degrees)
+lattice_triangle_s1 = Lattice(lattice_distance, vectors_triangle, basis_triangle, 60)
+lattice_triangle_s11= Lattice(lattice_distance, vectors_triangle, basis_triangle, 340)
+
+lattice_triangle_s1.plot_bilayer_2D(1.084549,point_size=2,isAlign=True)
+lattice_triangle_s11.plot_bilayer_2D(1.087791,point_size=0.005,isAlign=True)

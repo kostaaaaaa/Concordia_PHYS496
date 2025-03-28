@@ -345,7 +345,7 @@ class Lattice:
             plt.quiver(origin[0], origin[1], A2[0], A2[1], angles='xy', scale_units='xy', scale=1, color=(0.1, 0.2, 0.5, 0.8), width=0.005)            
         else:
             points = self.generate_lattice_points()
-            plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
+            plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=point_size0)
             a1 = self.vectors[0]
             a2 = self.vectors[1]
 
@@ -375,65 +375,69 @@ class Lattice:
         plt.show()
     
 
-    def plot_bilayer_2D(self, degrees, save=False):
+    def plot_bilayer_2D(self, degrees, point_size=5, isAlign=False, save=False):
         """ Plots 2D Bilayer of a given lattice, top-down view."""
         layer_1 = (0.1, 0.1, 0.6, 0.5)
         layer_2 = (0.6, 0.1, 0.1, 0.5)
     
         fig, ax = plt.subplots(figsize=(10, 10))
-    
-        if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
-            shift_x = self.lattice_distance * 0.5
-            shift_y = self.lattice_distance * np.sqrt(3) / 4
+        
+        if isAlign:
+            shift_x = 0
+            shift_y = 0
         else:
-            shift_x = self.lattice_distance
-            shift_y = self.lattice_distance
+            if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
+                shift_x = self.lattice_distance * 0.5
+                shift_y = self.lattice_distance * np.sqrt(3) / 4
+            else:
+                shift_x = 0.5*self.lattice_distance
+                shift_y = 0.5*self.lattice_distance
     
         if self.lattice_type == "Hexagon":
             p11, p12 = self.generate_lattice_points()
             p21, p22 = self.generate_rotated_points(degrees)
         
-            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="Layer 1")
-            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5)
-            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="Layer 2")
-            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5)
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="Layer 1")
+            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=point_size)
+            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=point_size, label="Layer 2")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=point_size)
     
         elif self.lattice_type == "Kagome":
             p11, p12, p13 = self.generate_lattice_points()
             p21, p22, p23 = self.generate_rotated_points(degrees)
         
-            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="Layer 1")
-            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5)
-            ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=5)
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="Layer 1")
+            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=point_size)
+            ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=point_size)
         
-            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="Layer 2")
-            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5)
-            ax.scatter(p23[:, 0] - shift_x, p23[:, 1] - shift_y, color=layer_2, s=5)
+            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=point_size, label="Layer 2")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=point_size)
+            ax.scatter(p23[:, 0] - shift_x, p23[:, 1] - shift_y, color=layer_2, s=point_size)
     
         elif self.lattice_type == "Triangle":
             p11 = self.generate_lattice_points()
             p22 = self.generate_rotated_points(degrees)
         
-            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="Layer 1")
-            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5, label="Layer 2")
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="Layer 1")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=point_size, label="Layer 2")
     
         elif self.lattice_type == "Lieb":
             p11, p12, p13 = self.generate_lattice_points()
             p21, p22, p23 = self.generate_rotated_points(degrees)
         
-            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="Layer 1")
-            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=5)
-            ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=5)
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="Layer 1")
+            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=point_size)
+            ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=point_size)
         
-            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=5, label="Layer 2")
-            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5)
-            ax.scatter(p23[:, 0] - shift_x, p23[:, 1] - shift_y, color=layer_2, s=5)
+            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=point_size, label="Layer 2")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=point_size)
+            ax.scatter(p23[:, 0] - shift_x, p23[:, 1] - shift_y, color=layer_2, s=point_size)
     
         else:
             p11 = self.generate_lattice_points()
             p22 = self.generate_rotated_points(degrees)
         
-            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="a1")
             ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=10, label="b2")
     
         ax.set_title(f"2D Bilayer {self.lattice_type}")
@@ -441,8 +445,10 @@ class Lattice:
         ax.legend()
     
         if save:
-            plt.savefig(f"{self.lattice_type}_bilayer_{degrees}.pdf")
-    
+            if isAlign:
+                plt.savefig(f"{self.lattice_type}_bilayer_{degrees}_aligned.pdf")
+            else:
+                plt.savefig(f"{self.lattice_type}_bilayer_{degrees}_shifted.pdf")
         plt.show()
 
     def plot_bilayer_comparison(self, degrees, save=False):
@@ -452,23 +458,24 @@ class Lattice:
         
         fig, axes = plt.subplots(1, 2, figsize=(20, 10))
         rotations = [degrees, -degrees]
-        titles = [f"{self.lattice_type} CW ({degrees}°)", f"{self.lattice_type} CCW ({-degrees}°)"]
+        titles = [f"{self.lattice_type} CCW ({degrees}°)", f"{self.lattice_type} CW ({-degrees}°)"]
         
         if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
             n = np.abs((1 - 2 * np.cos(np.radians(degrees))) / (3 * (np.cos(np.radians(degrees)) - 1) - np.sqrt(3) * np.sin(np.radians(degrees))))
         else:
             n = np.abs(np.cos(np.radians(degrees)) / (np.cos(np.radians(degrees)) - np.sin(np.radians(degrees)) - 1))
         
-        u1 = n * (self.vectors[0] + self.vectors[1]) + self.vectors[0]
-        u2 = n * (self.vectors[0] + self.vectors[1]) + self.vectors[1]
+        u1 = n * (self.vectors[0] + self.vectors[1]) - self.vectors[0]
+        u2 = n * (self.vectors[0] + self.vectors[1]) - self.vectors[1]
         
         for ax, deg, title in zip(axes, rotations, titles):
             if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
                 shift_x = self.lattice_distance * 0.5
                 shift_y = self.lattice_distance * np.sqrt(3) / 4
             else:
-                shift_x = self.lattice_distance
-                shift_y = self.lattice_distance
+                shift_x = 0
+                shift_y = 0.5*self.lattice_distance
+
             
             if self.lattice_type == "Hexagon":
                 p11, p12 = self.generate_lattice_points()
@@ -517,8 +524,8 @@ class Lattice:
                 ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
                 ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=10, label="b2")
             
-            ax.quiver(0, 0, u1[0], u1[1], color='r', angles='xy', scale_units='xy', scale=1, label='u1')
-            ax.quiver(0, 0, u2[0], u2[1], color='g', angles='xy', scale_units='xy', scale=1, label='u2')
+            ax.quiver(-self.vectors[0], -self.vectors[0], u1[0], u1[1], color='r', angles='xy', scale_units='xy', scale=1, label='u1')
+            ax.quiver(-self.vectors[1], -self.vectors[1], u2[0], u2[1], color='g', angles='xy', scale_units='xy', scale=1, label='u2')
             
             ax.set_title(title)
             ax.axis("equal")
@@ -537,7 +544,7 @@ class Lattice:
         
         fig, axes = plt.subplots(1, 2, figsize=(20, 10))
         rotations = [degrees, -degrees]
-        titles = [f"{self.lattice_type} CW ({degrees}°)", f"{self.lattice_type} CCW ({-degrees}°)"]
+        titles = [f"{self.lattice_type} CCW ({degrees}°)", f"{self.lattice_type} CW ({-degrees}°)"]
         
         if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
             n = np.abs((1 - 2 * np.cos(np.radians(degrees))) / (3 * (np.cos(np.radians(degrees)) - 1) - np.sqrt(3) * np.sin(np.radians(degrees))))
@@ -630,7 +637,7 @@ class Lattice:
         plt.axis('equal')
         plt.show()
     
-    def plot_bilayer(self, degrees, save=False):
+    def plot_bilayer(self, degrees, point_size=5, save=False):
         """ Plots 3D Bilayer of a given lattice, not aligned. The Second layer is shifted"""
         a = 0.5 
         layer_1 = (0.1,0.1,0.6,0.5)
@@ -641,7 +648,7 @@ class Lattice:
             p11,p12 = self.generate_lattice_points()
             p21,p22 = self.generate_rotated_points(degrees)
 
-            ax.scatter(p11[:, 0], p11[:, 1],0, color=layer_1, s=5, label="a1")
+            ax.scatter(p11[:, 0], p11[:, 1],0, color=layer_1, s=point_size, label="a1")
             ax.scatter(p12[:, 0], p12[:, 1],0, color=layer_1, s=5, label="b1")
 
             lattice_shift_x = self.lattice_distance*0.5
@@ -1068,7 +1075,7 @@ class Lattice:
             plt.savefig(f"{self.lattice_type}_bz_diff.pdf")
         plt.show()
 
-    def plot_bz_difference_U(self, degrees, s=1, save=False):
+    def plot_bz_difference_cw(self, degrees, s=1, save=False):
         """ plot to showcase the difference in brillouin zone for the twisted system """
         b1 = self.reciprocal_vectors[0]
         b2 = self.reciprocal_vectors[1]
@@ -1076,7 +1083,7 @@ class Lattice:
         a1 = self.vectors[0]
         a2 = self.vectors[1]
         angle = np.radians(degrees)
-        rot_matrix = np.array([[np.cos(-angle), -np.sin(-angle)], [np.sin(-angle), np.cos(-angle)]])
+        rot_matrix = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
         rota1 = rot_matrix @ a1
         rota2 = rot_matrix @ a2
 
@@ -1094,25 +1101,23 @@ class Lattice:
         if self.lattice_type == "Square":
             n = (-(s*cos_phi) / (cos_phi - sin_phi - 1))
             factor = 2 * np.pi / (2 * n**2 + 2 * n * s+ s**2)
-            b1 = factor * np.array([(n + s), n])
-            b2 = factor * np.array([-n, (n + s)])
+            b1_u2 = factor * np.array([(n + s), n])
+            b2_u2 = factor * np.array([-n, (n + s)])
         elif self.lattice_type == "Triangle":
-            n = s*abs((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
+            n = np.round(s*((np.sqrt(3)-2*sin_phi) / (np.sqrt(3) * (cos_phi - 1) + 3 * sin_phi)))
             factor = (2 * np.pi) / (3 * (n**2) + 3 * n * s + s**2)
-            b1_u1 = factor * np.array([(2 * n + s), -s / np.sqrt(3)])
-            b2_u1 = factor * np.array([-n, (3 * n + 2*s) / np.sqrt(3)])
             b1_u2 = factor * np.array([(2 * n + s), s / np.sqrt(3)])
             b2_u2 = factor * np.array([-n-s, (3 * n + s) / np.sqrt(3)])
         else:
             raise ValueError("twist vectors not defined for this lattice type.")
         
-        grid_size = int(n+1)
+        grid_size = int(n+2)
 
         if self.lattice_type =="Square":
             
             bz_edges = self.generate_bzedges(self.reciprocal_vectors[0],self.reciprocal_vectors[1])
             bz2_edges = self.generate_bzedges(rotb1,rotb2)
-            bz3_edges = self.generate_bzedges(b1_u1,b2_u1)
+            bz3_edges = self.generate_bzedges(b1_u2,b2_u2)
                     
             for i in range(4):
                         start = bz_edges[i]
@@ -1126,7 +1131,7 @@ class Lattice:
 
             for i in range(grid_size-2*s, grid_size+2*s):
                 for j in range(-int(grid_size/n), -int(grid_size/n)+5):
-                    translation = i * b1 + j * b2
+                    translation = i * b1_u2 + j * b2_u2
                     for k in range(len(bz3_edges)):
                         start = bz3_edges[k] + translation
                         end = bz3_edges[(k + 1) % len(bz3_edges)] + translation
@@ -1136,8 +1141,7 @@ class Lattice:
 
             bz_edges = self.generate_bzedges(self.reciprocal_vectors[0],self.reciprocal_vectors[1])
             bz2_edges = self.generate_bzedges(rotb1,rotb2)
-            bz3_edges = self.generate_bzedges(b1_u1,b2_u1)
-            bz4_edges = self.generate_bzedges(b1_u2,b2_u2)
+            bz3_edges = self.generate_bzedges(b1_u2,b2_u2)
             
             for i in range(len(bz_edges)):
                         start = bz_edges[i]
@@ -1150,22 +1154,14 @@ class Lattice:
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="rotated bz" if i == 0 else "")
 
             
-            for i in range(grid_size-s, grid_size+s):
-                for j in range(grid_size-s, grid_size+s):
-                    translation = i * b1_u1 + j * b2_u1
+            for i in range(-grid_size, grid_size):
+                for j in range(-grid_size, grid_size):
+                    translation = i * b1_u2 + j * b2_u2
                     for k in range(len(bz3_edges)):
                         start = bz3_edges[k] + translation
                         end = bz3_edges[(k + 1) % len(bz3_edges)] + translation
-                        ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.1, 0.6, 0.6), linewidth=0.25 , label="superlattice bz u1" if i == -grid_size and j == -grid_size and k == 0 else "")
+                        ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.1, 0.6, 0.6), linewidth=0.25 , label="Superlattice BZ" if i == -grid_size and j == -grid_size and k == 0 else "")
 
-            for i in range(grid_size-s, grid_size+s):
-                for j in range(grid_size-s, grid_size+s):
-                    translation = i * b1_u2 + j * b2_u2
-                    for k in range(len(bz4_edges)):
-                        start = bz4_edges[k] + translation
-                        end = bz4_edges[(k + 1) % len(bz4_edges)] + translation
-                        ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.1, 0.6, 0.1, 0.8), linewidth=0.5 , label="superlattice bz u2" if i == -grid_size and j == -grid_size and k == 0 else "")
-        
         plt.legend()
         if save:
             plt.savefig(f"{self.lattice_type}_bz_diff.pdf")
