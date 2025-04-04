@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-n_values = np.arange(30, 51, 1)  
+n_values = np.arange(60, 80, 1)  
 
 def compute_phi(n, s):
     numerator = 2*n**2+2*n*s

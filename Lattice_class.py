@@ -250,13 +250,13 @@ class Lattice:
         plt.show()
 
 
-    def plot_lattice(self, save=False):
+    def plot_lattice(self, save=False, border=True):
         """ plots 2d lattice structure """
         plt.figure(figsize=(8, 8))
         if self.lattice_type=="Hexagon":
             points, points2 = self.generate_lattice_points()
-            plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
-            plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=50)
+            plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=25)
+            plt.scatter(points2[:, 0], points2[:, 1], color=(0.5, 0.1, 0.2, 0.5), s=25)
         elif self.lattice_type =="Kagome":
             points, points2, points3 = self.generate_lattice_points()
             plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
@@ -270,11 +270,17 @@ class Lattice:
         else:
             points = self.generate_lattice_points()
             plt.scatter(points[:, 0], points[:, 1], color=(0.1, 0.2, 0.5, 0.5), s=50)
+        
+        if border:
+            plt.title(f'{self.lattice_type} Lattice')
+            plt.axis('equal')
+            plt.xlabel('x')
+            plt.ylabel('y')
+        else:
+            plt.axis('equal')
+            plt.axis("off")
 
-        plt.title(f'{self.lattice_type} Lattice')
-        plt.axis('equal')
-        plt.xlabel('x')
-        plt.ylabel('y')
+
         if save:
             plt.savefig(f'{self.lattice_type}_lattice_plot.pdf')
         plt.show()
@@ -375,7 +381,7 @@ class Lattice:
         plt.show()
     
 
-    def plot_bilayer_2D(self, degrees, point_size=5, isAlign=False, save=False):
+    def plot_bilayer_2D(self, degrees, point_size=2, isAlign=False, save=False, border=True):
         """ Plots 2D Bilayer of a given lattice, top-down view."""
         layer_1 = (0.1, 0.1, 0.6, 0.5)
         layer_2 = (0.6, 0.1, 0.1, 0.5)
@@ -399,8 +405,8 @@ class Lattice:
         
             ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="Layer 1")
             ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=point_size)
-            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=point_size, label="Layer 2")
-            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=point_size)
+            ax.scatter(p21[:, 0] + shift_x, p21[:, 1] + shift_y, color=layer_2, s=point_size, label="Layer 2")
+            ax.scatter(p22[:, 0] + shift_x, p22[:, 1] + shift_y, color=layer_2, s=point_size)
     
         elif self.lattice_type == "Kagome":
             p11, p12, p13 = self.generate_lattice_points()
@@ -438,11 +444,103 @@ class Lattice:
             p22 = self.generate_rotated_points(degrees)
         
             ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="a1")
-            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=10, label="b2")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2,s=point_size, label="b2")
+        
+        if border:
+
+            ax.set_title(f"2D Bilayer {self.lattice_type}")
+            ax.axis("equal")
+            ax.legend()
+        else:
+            ax.axis("equal")
+            ax.axis("off")
     
-        ax.set_title(f"2D Bilayer {self.lattice_type}")
-        ax.axis("equal")
-        ax.legend()
+        if save:
+            if isAlign:
+                plt.savefig(f"{self.lattice_type}_bilayer_{degrees}_aligned.pdf")
+            else:
+                plt.savefig(f"{self.lattice_type}_bilayer_{degrees}_shifted.pdf")
+        plt.show()
+
+    def plot_bilayer_2D_MM(self, degrees, point_size=2, isAlign=False, save=False, border=True):
+        """ Plots 2D Bilayer of a given lattice, top-down view."""
+        layer_1 = (0.1, 0.1, 0.6, 0.5)
+        layer_2 = (0.6, 0.1, 0.1, 0.5)
+    
+        fig, ax = plt.subplots(figsize=(10, 10))
+        if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
+            n = np.round(np.abs((1 - 2 * np.cos(np.radians(degrees))) / (3 * (np.cos(np.radians(degrees)) - 1) - np.sqrt(3) * np.sin(np.radians(degrees)))))
+        else:
+            n = np.abs(np.cos(np.radians(degrees)) / (np.cos(np.radians(degrees)) - np.sin(np.radians(degrees)) - 1))
+        
+        A1 = [1/2*(3*n+1),np.sqrt(3)/2*(n+1)]
+        A2 = [-1/2, np.sqrt(3)/2*(2*n+1)]
+        
+        if isAlign:
+            shift_x = 0
+            shift_y = 0
+        else:
+            if self.lattice_type in ["Hexagon", "Kagome", "Triangle"]:
+                shift_x = self.lattice_distance * 0.5
+                shift_y = self.lattice_distance * np.sqrt(3) / 4
+            else:
+                shift_x = 0.5*self.lattice_distance
+                shift_y = 0.5*self.lattice_distance
+    
+        if self.lattice_type == "Hexagon":
+            p11, p12 = self.generate_lattice_points()
+            p21, p22 = self.generate_rotated_points(degrees)
+        
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="Layer 1")
+            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=point_size)
+            ax.scatter(p21[:, 0] + shift_x, p21[:, 1] + shift_y, color=layer_2, s=point_size, label="Layer 2")
+    
+        elif self.lattice_type == "Kagome":
+            p11, p12, p13 = self.generate_lattice_points()
+            p21, p22, p23 = self.generate_rotated_points(degrees)
+        
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="Layer 1")
+            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=point_size)
+            ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=point_size)
+        
+            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=point_size, label="Layer 2")
+    
+        elif self.lattice_type == "Triangle":
+            p11 = self.generate_lattice_points()
+            p22 = self.generate_rotated_points(degrees)
+        
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="Layer 1")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=point_size, label="Layer 2")
+    
+        elif self.lattice_type == "Lieb":
+            p11, p12, p13 = self.generate_lattice_points()
+            p21, p22, p23 = self.generate_rotated_points(degrees)
+        
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="Layer 1")
+            ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=point_size)
+            ax.scatter(p13[:, 0], p13[:, 1], color=layer_1, s=point_size)
+        
+            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=point_size, label="Layer 2")
+    
+        else:
+            p11 = self.generate_lattice_points()
+            p22 = self.generate_rotated_points(degrees)
+        
+            ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="a1")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2,s=point_size, label="b2")
+        
+        origin = np.array([0, 0])
+        ax.quiver(origin[0], origin[1], A1[0], A1[1], angles='xy', scale_units='xy', scale=1, color=(0.1, 0.2, 0.5, 0.8), width=0.005)
+        ax.quiver(origin[0], origin[1], A2[0], A2[1], angles='xy', scale_units='xy', scale=1, color=(0.1, 0.2, 0.5, 0.8), width=0.005)
+        
+        if border:
+
+            ax.set_title(f"2D Bilayer {self.lattice_type}")
+            ax.axis("equal")
+            ax.legend()
+        else:
+            ax.axis("equal")
+            ax.axis("off")
     
         if save:
             if isAlign:
@@ -587,8 +685,8 @@ class Lattice:
                 p11 = self.generate_lattice_points()
                 p22 = self.generate_rotated_points(deg)
                 
-                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5, label="a1")
-                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5, label="b2")
+                ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=5)
+                ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=5)
             
             elif self.lattice_type == "Lieb":
                 p11, p12, p13 = self.generate_lattice_points()
@@ -1010,8 +1108,8 @@ class Lattice:
         if self.lattice_type == "Square":
             n = (-(s*cos_phi) / (cos_phi - sin_phi - 1))
             factor = 2 * np.pi / (2 * n**2 + 2 * n * s+ s**2)
-            b1 = factor * np.array([(n + s), n])
-            b2 = factor * np.array([-n, (n + s)])
+            b1 = factor * np.array([n, (n+s)])
+            b2 = factor * np.array([-n-s, (n)])
         elif self.lattice_type == "Triangle":
             n = s*abs((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
             factor = (2 * np.pi) / (3 * (n**2) + 3 * n * s + s**2)
@@ -1039,7 +1137,7 @@ class Lattice:
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="rotated bz" if i == 0 else "")
 
             for i in range(grid_size-2*s, grid_size+2*s):
-                for j in range(-int(grid_size/n), -int(grid_size/n)+5):
+                for j in range(-int(grid_size/n)-4, -int(grid_size/n)+4):
                     translation = i * b1 + j * b2
                     for k in range(len(bz3_edges)):
                         start = bz3_edges[k] + translation
@@ -1154,8 +1252,8 @@ class Lattice:
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="rotated bz" if i == 0 else "")
 
             
-            for i in range(-grid_size, grid_size):
-                for j in range(-grid_size, grid_size):
+            for i in range(grid_size-s, grid_size+s):
+                for j in range(grid_size-s, grid_size+s):
                     translation = i * b1_u2 + j * b2_u2
                     for k in range(len(bz3_edges)):
                         start = bz3_edges[k] + translation

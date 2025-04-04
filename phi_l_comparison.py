@@ -9,8 +9,8 @@ def phi(n, s):
 def bz_length(n, s):
     return (4 * np.pi / 3) / np.sqrt(3 * n**2 + 3 * n * s + s**2)
 
-n_values = np.arange(1, 900, 1)
-s_values = [1] + list(primerange(1, 20))
+n_values = np.arange(1, 400, 1)
+s_values = [1] + list(primerange(1, 10))
 
 phi_dict = {}
 ns_dict = {}
@@ -35,7 +35,7 @@ ax.set_xlim(0, 2)
 ax.set_yscale('log')
 ax.set_title("Max BZ Length vs Phi (Log Scale)", fontsize=14)
 ax.set_xlabel("Phi (degrees)", fontsize=12)
-ax.set_ylabel("Max BZ Length (log scale)", fontsize=12)
+ax.set_ylabel("Max BZ Length ", fontsize=12)
 ax.legend()
 
 def on_click(event):
