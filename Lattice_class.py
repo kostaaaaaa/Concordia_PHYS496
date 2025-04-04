@@ -405,8 +405,8 @@ class Lattice:
         
             ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="Layer 1")
             ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=point_size)
-            ax.scatter(p21[:, 0] + shift_x, p21[:, 1] + shift_y, color=layer_2, s=point_size, label="Layer 2")
-            ax.scatter(p22[:, 0] + shift_x, p22[:, 1] + shift_y, color=layer_2, s=point_size)
+            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=point_size, label="Layer 2")
+            ax.scatter(p22[:, 0] - shift_x, p22[:, 1] - shift_y, color=layer_2, s=point_size)
     
         elif self.lattice_type == "Kagome":
             p11, p12, p13 = self.generate_lattice_points()
@@ -493,7 +493,7 @@ class Lattice:
         
             ax.scatter(p11[:, 0], p11[:, 1], color=layer_1, s=point_size, label="Layer 1")
             ax.scatter(p12[:, 0], p12[:, 1], color=layer_1, s=point_size)
-            ax.scatter(p21[:, 0] + shift_x, p21[:, 1] + shift_y, color=layer_2, s=point_size, label="Layer 2")
+            ax.scatter(p21[:, 0] - shift_x, p21[:, 1] - shift_y, color=layer_2, s=point_size, label="Layer 2")
     
         elif self.lattice_type == "Kagome":
             p11, p12, p13 = self.generate_lattice_points()
@@ -1082,7 +1082,7 @@ class Lattice:
         else:
             plt.show()
 
-    def plot_bz_difference(self, degrees, s=1, save=False):
+    def plot_bz_difference_CCW(self, degrees, s=1, save=False):
         """ plot to showcase the difference in brillouin zone for the twisted system """
         b1 = self.reciprocal_vectors[0]
         b2 = self.reciprocal_vectors[1]
@@ -1090,7 +1090,7 @@ class Lattice:
         a1 = self.vectors[0]
         a2 = self.vectors[1]
         angle = np.radians(degrees)
-        rot_matrix = np.array([[np.cos(-angle), -np.sin(-angle)], [np.sin(-angle), np.cos(-angle)]])
+        rot_matrix = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
         rota1 = rot_matrix @ a1
         rota2 = rot_matrix @ a2
 
@@ -1113,8 +1113,8 @@ class Lattice:
         elif self.lattice_type == "Triangle":
             n = s*abs((1 - 2 * cos_phi) / (3 * (cos_phi - 1) - np.sqrt(3) * sin_phi))
             factor = (2 * np.pi) / (3 * (n**2) + 3 * n * s + s**2)
-            b1 = factor * np.array([(2 * n + s), -s / np.sqrt(3)])
-            b2 = factor * np.array([-n, (3 * n + 2*s) / np.sqrt(3)])
+            b1 = factor * np.array([(2 * n + s), s / np.sqrt(3)])
+            b2 = factor * np.array([-n-s, (3 * n + s) / np.sqrt(3)])
         else:
             raise ValueError("twist vectors not defined for this lattice type.")
         
@@ -1161,8 +1161,8 @@ class Lattice:
                         ax.plot([start[0], end[0]], [start[1], end[1]], '-', color=(0.5, 0.1, 0.2, 0.8), label="rotated bz" if i == 0 else "")
 
             
-            for i in range(grid_size, grid_size+s):
-                for j in range(grid_size, grid_size+s):
+            for i in range(grid_size-s, grid_size+s):
+                for j in range(grid_size-s, grid_size+s):
                     translation = i * b1 + j * b2
                     for k in range(len(bz3_edges)):
                         start = bz3_edges[k] + translation
@@ -1173,14 +1173,14 @@ class Lattice:
             plt.savefig(f"{self.lattice_type}_bz_diff.pdf")
         plt.show()
 
-    def plot_bz_difference_cw(self, degrees, s=1, save=False):
+    def plot_bz_difference_CW(self, degrees, s=1, save=False):
         """ plot to showcase the difference in brillouin zone for the twisted system """
         b1 = self.reciprocal_vectors[0]
         b2 = self.reciprocal_vectors[1]
 
         a1 = self.vectors[0]
         a2 = self.vectors[1]
-        angle = np.radians(degrees)
+        angle = -np.radians(degrees)
         rot_matrix = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
         rota1 = rot_matrix @ a1
         rota2 = rot_matrix @ a2
@@ -1190,8 +1190,8 @@ class Lattice:
         rotb1 = rotb[0]
         rotb2 = rotb[1]
 
-        cos_phi = np.cos(angle)
-        sin_phi = np.sin(angle)
+        cos_phi = np.cos(-angle)
+        sin_phi = np.sin(-angle)
 
         fig, ax = plt.subplots(figsize=(10, 10))
         ax.set_title(f'{self.lattice_type} Brillouin Zone Pattern')
@@ -1204,8 +1204,8 @@ class Lattice:
         elif self.lattice_type == "Triangle":
             n = np.round(s*((np.sqrt(3)-2*sin_phi) / (np.sqrt(3) * (cos_phi - 1) + 3 * sin_phi)))
             factor = (2 * np.pi) / (3 * (n**2) + 3 * n * s + s**2)
-            b1_u2 = factor * np.array([(2 * n + s), s / np.sqrt(3)])
-            b2_u2 = factor * np.array([-n-s, (3 * n + s) / np.sqrt(3)])
+            b1_u2 = factor * np.array([(2 * n + s), -s / np.sqrt(3)])
+            b2_u2 = factor * np.array([-n, (3 * n + 2*s) / np.sqrt(3)])
         else:
             raise ValueError("twist vectors not defined for this lattice type.")
         
